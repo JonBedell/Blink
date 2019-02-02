@@ -69,12 +69,12 @@ Dot::Dot(int loc, int red, int green, int blue)
 
 //Making Objects
 // Buttons 
-Button B(8);
-Button A(9);
-Button Right(10);
-Button Up(11);
-Button Left(12);
-Button Down(13);
+Button B(10);
+Button A(11);
+Button Right(12);
+Button Up(13);
+Button Left(9);
+Button Down3(8);
 // Dots on Strip
 Dot player(0,255,0,0);
 Dot target(10,0,0,255);
