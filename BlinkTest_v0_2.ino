@@ -4,7 +4,7 @@
 
 #include <Adafruit_NeoPixel.h>
 #define PIN 1	 // input pin Neopixel is attached to
-#define NUMPIXELS 20 // number of neopixels in Ring
+#define NUMPIXELS 30 // number of neopixels in Ring
 #define debounceTime 200
 
 //CLASSES 
@@ -157,7 +157,7 @@ void loop() {
         }
 
     //Restart game
-    player.Loc = random(0,20);
-    target.Loc = random(0,20);
+    player.Loc = random(0,NUMPIXELS);
+    target.Loc = random(0,NUMPIXELS);
     }
 }
