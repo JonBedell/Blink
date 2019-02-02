@@ -6,6 +6,7 @@
 #define PIN 1	 // input pin Neopixel is attached to
 #define NUMPIXELS 30 // number of neopixels in Ring
 #define debounceTime 200
+#define delayval 75
 
 //CLASSES 
 
@@ -43,14 +44,28 @@ Class that sets a dot in a specific locatio on the LED strip
 */
 class Dot {
     public:
-        //location value
+        //location values
         int Loc;
+        bool LocUp;
         //colors (RGB)
         int Red;
         int Green;
         int Blue;
     //Constructor
     Dot(int, int, int, int);
+    //Cycles thru colors of player
+    void colorCycle()
+    {
+    //store old color values        
+    int oldBlue = Blue;
+    int oldGreen = Green;
+    int oldRed = Red;
+    //replace color values
+    Blue = oldRed;
+    Green = oldBlue;
+    Red = oldGreen;
+    //Add more colors thru map or array or something                
+    }        
 };
 /**
  * Dot Constructor
@@ -65,6 +80,7 @@ Dot::Dot(int loc, int red, int green, int blue)
     Red = red;
     Green = green;
     Blue = blue;
+    LocUp = true;
 }
 
 //Making Objects
@@ -74,7 +90,7 @@ Button A(11);
 Button Right(12);
 Button Up(13);
 Button Left(9);
-Button Down3(8);
+Button Down(8);
 // Dots on Strip
 Dot player(0,255,0,0);
 Dot target(10,0,0,255);
@@ -84,10 +100,9 @@ int blueColor = 0;
 int greenColor = 0;
 int buttonUpState = 0; 
 int buttonDownState = 0;
+int buttonBState = 0;
 //LED strip
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
-int delayval = 100; // timing delay
 
 void setup() {
 //??NOT SURE WHAT THIS DOES BUT IS IN A LOT OF EXAMPLE CODE??? - JON
@@ -106,25 +121,34 @@ void setup() {
 }
 
 void loop() {
-
+    delay(delayval);
 
     // read the state of the pushbutton value:
     buttonUpState = Up.read();
     buttonDownState = Down.read();
+    buttonBState = B.read();
 
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
     // If Button is pressed, current Dot is removed, and player location is +1'd
-    if (buttonUpState == HIGH && player.Loc < 21) {
+    if (buttonUpState == HIGH && player.Loc < (NUMPIXELS-1)) {
         // move player up:
         pixels.setPixelColor(player.Loc, pixels.Color(0, 0, 0)); // erase old.
         player.Loc++;
+        player.LocUp = true;
     }
     buttonDownState = Down.read();
     if (buttonDownState == HIGH && player.Loc > 0) {
         // move player down:
         pixels.setPixelColor(player.Loc, pixels.Color(0, 0, 0)); // erase old.
         player.Loc--;
+        player.LocUp = false;
     }
+    // Read B Button for color change
+    if (buttonBState == HIGH) {
+        // move player down:
+        player.colorCycle();
+    }
+
     //Reset pixel locations to current locations (i.e. if Button was pressed)
     pixels.setPixelColor(player.Loc, pixels.Color(player.Red, player.Green, player.Blue)); // Player.
     pixels.setPixelColor(target.Loc, pixels.Color(target.Red, target.Green, target.Blue)); // Target.
@@ -132,28 +156,55 @@ void loop() {
 
 //Win state
     if (player.Loc == target.Loc) {
-        for (int i=player.Loc; i<NUMPIXELS; i++){
-            int redColor = random(0,255);
-            int greenColor = random(0,255);
-            int blueColor = random(0,255);
-            pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-            pixels.show();
-            delay(50);
-        }
-        for (int i=player.Loc; i>-1; i--){
-            int redColor = random(0,255);
-            int greenColor = random(0,255);
-            int blueColor = random(0,255);
-            pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-            pixels.show();
-            delay(50);
-        }
-        for (int i=0; i<NUMPIXELS; i++){
-            redColor = 0;
-            greenColor = 0;
-            blueColor = 0;
-            pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-            pixels.show();
+        if(player.LocUp)
+        {
+            for (int i=player.Loc; i<NUMPIXELS; i++){
+                int redColor = random(0,255);
+                int greenColor = random(0,255);
+                int blueColor = random(0,255);
+                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
+                pixels.show();
+                delay(50);
+            }
+            for (int i=player.Loc; i>-1; i--){
+                int redColor = random(0,255);
+                int greenColor = random(0,255);
+                int blueColor = random(0,255);
+                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
+                pixels.show();
+                delay(50);
+            }
+            for (int i=0; i<NUMPIXELS; i++){
+                redColor = 0;
+                greenColor = 0;
+                blueColor = 0;
+                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
+                pixels.show();
+            }
+        } else {
+            for (int i=player.Loc; i>-1; i--){
+                int redColor = random(0,255);
+                int greenColor = random(0,255);
+                int blueColor = random(0,255);
+                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
+                pixels.show();
+                delay(50);
+            }
+            for (int i=player.Loc; i<NUMPIXELS; i++){
+                int redColor = random(0,255);
+                int greenColor = random(0,255);
+                int blueColor = random(0,255);
+                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
+                pixels.show();
+                delay(50);
+            }
+            for (int i=NUMPIXELS; i>-1; i--){
+                redColor = 0;
+                greenColor = 0;
+                blueColor = 0;
+                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
+                pixels.show();
+            }
         }
 
     //Restart game
