@@ -3,10 +3,11 @@
 //Link: https://www.tinkercad.com/things/1R8qPQe4sb5-led-w-buttons/editel?sharecode=Vn1hbirx4j2s2nK6gWdwb0B2oMcUVibSb7WXxpyg8gc=
 
 #include <Adafruit_NeoPixel.h>
-#define PIN 1	 // input pin Neopixel is attached to
-#define NUMPIXELS 30 // number of neopixels in Ring
+#define PIN 1   // input pin Neopixel is attached to
+#define NUMPIXELS 300 // number of neopixels in Ring
 #define debounceTime 200
-#define delayval 75
+#define delayval 25
+#define animationDelay 0
 
 //CLASSES 
 
@@ -164,7 +165,7 @@ void loop() {
                 int blueColor = random(0,255);
                 pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
                 pixels.show();
-                delay(50);
+                delay(animationDelay);
             }
             for (int i=player.Loc; i>-1; i--){
                 int redColor = random(0,255);
@@ -172,7 +173,7 @@ void loop() {
                 int blueColor = random(0,255);
                 pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
                 pixels.show();
-                delay(50);
+                delay(animationDelay);
             }
             for (int i=0; i<NUMPIXELS; i++){
                 redColor = 0;
@@ -188,7 +189,7 @@ void loop() {
                 int blueColor = random(0,255);
                 pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
                 pixels.show();
-                delay(50);
+                delay(animationDelay);
             }
             for (int i=player.Loc; i<NUMPIXELS; i++){
                 int redColor = random(0,255);
@@ -196,7 +197,7 @@ void loop() {
                 int blueColor = random(0,255);
                 pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
                 pixels.show();
-                delay(50);
+                delay(animationDelay);
             }
             for (int i=NUMPIXELS; i>-1; i--){
                 redColor = 0;
