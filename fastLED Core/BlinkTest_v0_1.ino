@@ -55,19 +55,60 @@ class Dot {
         int Blue;
     //Constructor
     Dot(int, int, int, int);
+
     //Cycles thru colors of player
     void colorCycle()
     {
-    //store old color values        
-    int oldBlue = Blue;
-    int oldGreen = Green;
-    int oldRed = Red;
-    //replace color values
-    Blue = oldRed;
-    Green = oldBlue;
-    Red = oldGreen;
+        //store old color values        
+        int oldBlue = Blue;
+        int oldGreen = Green;
+        int oldRed = Red;
+        //replace color values
+        Blue = oldRed;
+        Green = oldBlue;
+        Red = oldGreen;
     //Add more colors thru map or array or something                
-    }        
+    }     
+
+    //attack
+    void attack()
+    {
+        // indicate attack is charging
+        int attackChargeTime = millis()
+        for (int i=target.Loc; i<target.Loc+5; i++){
+            leds[i] = CRGB::DarkRed;
+        }
+        for (int i=target.Loc; i>target.Loc-5; i--){
+            leds[i] = CRGB::DarkRed
+        }
+        //indicate attack charge complete
+        if attackChargeTime < 2000{
+            for (int i=target.Loc; i<target.Loc+5; i++){
+                leds[i] = CRGB::Red;
+        }
+        for (int i=target.Loc; i>target.Loc-5; i--){
+                leds[i] = CRGB::Red
+        }
+        }
+        //begin attack
+        for (int i=target.Loc; i<target.Loc+15; i++){
+            leds[i] = CRGB::White;
+        }
+        for (int i=target.Loc; i>target.Loc-15; i--){
+            leds[i] = CRGB::White
+        }
+        }
+        //end attack
+        for (int i=target.Loc; i<target.Loc+15; i++){
+             //fade to black by 25% per iteration
+             leds[i].fadeToBlackBy( 64 );
+        }
+        for (int i=target.Loc; i>target.Loc-15; i--){
+             leds[i].fadeToBlackBy( 64 );
+        }
+        }
+    }   
+
 };
 /**
  * Dot Constructor
