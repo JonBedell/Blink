@@ -1,14 +1,14 @@
 //This file is what we use in the tinkerCAD drawing of moving the light with buttons towards a goal
-// Version 0.2 - We gone OOP'd
-//Link: https://www.tinkercad.com/things/1R8qPQe4sb5-led-w-buttons/editel?sharecode=Vn1hbirx4j2s2nK6gWdwb0B2oMcUVibSb7WXxpyg8gc=
+//Not compatibale with tinkerCad
+// Version 0.1 - We gone FastLED Test
 
-#include <Adafruit_NeoPixel.h>
-#define PIN 1   // input pin Neopixel is attached to
-#define NUMPIXELS 300 // number of neopixels in Ring
-#define debounceTime 200
-#define delayval 25
-#define animationDelay 0
-#define blankPixel pixels.Color(0,0,0)
+
+#include <FastLED.h>
+#define PIN 1   // OUTPUT pin WS2812B LED Strip is attached to TODO: Rename to LED_PIN
+#define NUMPIXELS 300 // number of LEDs per strip TODO: Rename to NUM_LEDS
+#define debounceTime 200 // keep those button inputs clean
+#define delayval 25 //controls the "speed" of the player dot
+#define animationDelay 0 //controls the speed of the win animation
 
 //CLASSES 
 
@@ -55,19 +55,60 @@ class Dot {
         int Blue;
     //Constructor
     Dot(int, int, int, int);
+
     //Cycles thru colors of player
     void colorCycle()
     {
-    //store old color values        
-    int oldBlue = Blue;
-    int oldGreen = Green;
-    int oldRed = Red;
-    //replace color values
-    Blue = oldRed;
-    Green = oldBlue;
-    Red = oldGreen;
+        //store old color values        
+        int oldBlue = Blue;
+        int oldGreen = Green;
+        int oldRed = Red;
+        //replace color values
+        Blue = oldRed;
+        Green = oldBlue;
+        Red = oldGreen;
     //Add more colors thru map or array or something                
-    }       
+    }     
+
+    //attack
+    void attack()
+    {
+        // indicate attack is charging
+        int attackChargeTime = millis()
+        for (int i=target.Loc; i<target.Loc+5; i++){
+            leds[i] = CRGB::DarkRed;
+        }
+        for (int i=target.Loc; i>target.Loc-5; i--){
+            leds[i] = CRGB::DarkRed
+        }
+        //indicate attack charge complete
+        if attackChargeTime < 2000{
+            for (int i=target.Loc; i<target.Loc+5; i++){
+                leds[i] = CRGB::Red;
+        }
+        for (int i=target.Loc; i>target.Loc-5; i--){
+                leds[i] = CRGB::Red
+        }
+        }
+        //begin attack
+        for (int i=target.Loc; i<target.Loc+15; i++){
+            leds[i] = CRGB::White;
+        }
+        for (int i=target.Loc; i>target.Loc-15; i--){
+            leds[i] = CRGB::White
+        }
+        }
+        //end attack
+        for (int i=target.Loc; i<target.Loc+15; i++){
+             //fade to black by 25% per iteration
+             leds[i].fadeToBlackBy( 64 );
+        }
+        for (int i=target.Loc; i>target.Loc-15; i--){
+             leds[i].fadeToBlackBy( 64 );
+        }
+        }
+    }   
+
 };
 /**
  * Dot Constructor
@@ -104,7 +145,8 @@ int buttonUpState = 0;
 int buttonDownState = 0;
 int buttonBState = 0;
 //LED strip
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+// This is an array of leds.  One item for each led in your strip.
+CRGB leds[NUMPIXELS];
 
 void setup() {
 //??NOT SURE WHAT THIS DOES BUT IS IN A LOT OF EXAMPLE CODE??? - JON
@@ -112,14 +154,17 @@ void setup() {
 // while (!Serial) {
 //  ; // wait for serial port to connect. Needed for native USB
 //}
-    // Initialize the NeoPixel library.
-    pixels.begin(); 
+	// sanity check delay - allows reprogramming if accidently blowing power w/leds
+   	delay(2000);
+    FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUMPIXELS);
     // initialize the pushbutton pin as an input:
     //Dot player(0,255,0,0);
     //Dot target(10,0,0,255);
-    pixels.setPixelColor(player.Loc, player.Red, player.Green, player.Blue); // Player.
-    pixels.setPixelColor(target.Loc, pixels.Color(target.Red, target.Green, target.Blue));
-    pixels.show();
+    leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
+    leds[target.Loc].setRGB(target.Red, target.Green, target.Blue); // Player.
+    //Many options for ways to set color see below
+    //https://github.com/FastLED/FastLED/wiki/Controlling-leds
+    FastLED.show();
 }
 
 void loop() {
@@ -134,14 +179,14 @@ void loop() {
     // If Button is pressed, current Dot is removed, and player location is +1'd
     if (buttonUpState == HIGH && player.Loc < (NUMPIXELS-1)) {
         // move player up:
-        pixels.setPixelColor(player.Loc, pixels.Color(0, 0, 0)); // erase old.
+        leds[player.Loc] = CRGB::Black; //erase old location
         player.Loc++;
         player.LocUp = true;
     }
     buttonDownState = Down.read();
     if (buttonDownState == HIGH && player.Loc > 0) {
         // move player down:
-        pixels.setPixelColor(player.Loc, pixels.Color(0, 0, 0)); // erase old.
+        leds[player.Loc] = CRGB::Black; //erase old location
         player.Loc--;
         player.LocUp = false;
     }
@@ -150,22 +195,11 @@ void loop() {
         // move player down:
         player.colorCycle();
     }
-    
-    // target movement
-    int targetRandom = random(0, 100);
-    if(targetRandom < 5){
-        pixels.setPixelColor(target.Loc, blankPixel);
-        if(player.Loc > target.Loc && target.Loc < (NUMPIXELS-1)){
-            target.Loc--;
-        }else if (target.Loc > 0){
-            target.Loc++;
-        }
-    } 
 
     //Reset pixel locations to current locations (i.e. if Button was pressed)
-    pixels.setPixelColor(player.Loc, pixels.Color(player.Red, player.Green, player.Blue)); // Player.
-    pixels.setPixelColor(target.Loc, pixels.Color(target.Red, target.Green, target.Blue)); // Target.
-    pixels.show();
+    leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
+    leds[target.Loc].setRGB(target.Red, target.Green, target.Blue); // Target (not used unless target has move conditions)
+    FastLED.show();
 
 //Win state
     if (player.Loc == target.Loc) {
@@ -175,51 +209,50 @@ void loop() {
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
-                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-                pixels.show();
+                leds[i].setRGB( redColor, greenColor, blueColor);
+                FastLED.show();
                 delay(animationDelay);
             }
             for (int i=player.Loc; i>-1; i--){
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
-                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-                pixels.show();
+                leds[i].setRGB( redColor, greenColor, blueColor);
+                FastLED.show();
                 delay(animationDelay);
             }
             for (int i=0; i<NUMPIXELS; i++){
                 redColor = 0;
                 greenColor = 0;
                 blueColor = 0;
-                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-                pixels.show();
+                leds[i].setRGB( redColor, greenColor, blueColor);
+                FastLED.show();
             }
         } else {
             for (int i=player.Loc; i>-1; i--){
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
-                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-                pixels.show();
+                leds[i].setRGB( redColor, greenColor, blueColor);
+                FastLED.show();
                 delay(animationDelay);
             }
             for (int i=player.Loc; i<NUMPIXELS; i++){
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
-                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-                pixels.show();
+                leds[i].setRGB( redColor, greenColor, blueColor);
+                FastLED.show();
                 delay(animationDelay);
             }
             for (int i=NUMPIXELS; i>-1; i--){
                 redColor = 0;
                 greenColor = 0;
                 blueColor = 0;
-                pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
-                pixels.show();
+                leds[i].setRGB( redColor, greenColor, blueColor);
+                FastLED.show();
             }
         }
-
 
     //Restart game
     player.Loc = random(0,NUMPIXELS);
