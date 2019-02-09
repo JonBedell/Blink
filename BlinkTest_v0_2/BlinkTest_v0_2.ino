@@ -8,6 +8,7 @@
 #define debounceTime 200
 #define delayval 25
 #define animationDelay 0
+#define blankPixel pixels.Color(0,0,0)
 
 //CLASSES 
 
@@ -66,7 +67,7 @@ class Dot {
     Green = oldBlue;
     Red = oldGreen;
     //Add more colors thru map or array or something                
-    }        
+    }       
 };
 /**
  * Dot Constructor
@@ -149,6 +150,17 @@ void loop() {
         // move player down:
         player.colorCycle();
     }
+    
+    // target movement
+    int targetRandom = random(0, 100);
+    if(targetRandom < 5){
+        pixels.setPixelColor(target.Loc, blankPixel);
+        if(player.Loc > target.Loc && target.Loc < (NUMPIXELS-1)){
+            target.Loc--;
+        }else if (target.Loc > 0){
+            target.Loc++;
+        }
+    } 
 
     //Reset pixel locations to current locations (i.e. if Button was pressed)
     pixels.setPixelColor(player.Loc, pixels.Color(player.Red, player.Green, player.Blue)); // Player.
@@ -207,6 +219,7 @@ void loop() {
                 pixels.show();
             }
         }
+
 
     //Restart game
     player.Loc = random(0,NUMPIXELS);
