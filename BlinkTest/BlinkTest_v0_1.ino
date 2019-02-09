@@ -4,8 +4,8 @@
 
 
 #include <FastLED.h>
-#define PIN 1   // OUTPUT pin WS2812B LED Strip is attached to TODO: Rename to LED_PIN
-#define NUMPIXELS 300 // number of LEDs per strip TODO: Rename to NUM_LEDS
+#define LED_PIN 1   // OUTPUT pin WS2812B LED Strip is attached to
+#define NUM_LEDS 300 // number of LEDs per strip
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
@@ -146,7 +146,7 @@ int buttonDownState = 0;
 int buttonBState = 0;
 //LED strip
 // This is an array of leds.  One item for each led in your strip.
-CRGB leds[NUMPIXELS];
+CRGB leds[NUM_LEDS];
 
 void setup() {
 //??NOT SURE WHAT THIS DOES BUT IS IN A LOT OF EXAMPLE CODE??? - JON
@@ -156,7 +156,7 @@ void setup() {
 //}
 	// sanity check delay - allows reprogramming if accidently blowing power w/leds
    	delay(2000);
-    FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUMPIXELS);
+    FastLED.addLeds<WS2812B, LED_PIN, RGB>(leds, NUM_LEDS);
     // initialize the pushbutton pin as an input:
     //Dot player(0,255,0,0);
     //Dot target(10,0,0,255);
@@ -177,7 +177,7 @@ void loop() {
 
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
     // If Button is pressed, current Dot is removed, and player location is +1'd
-    if (buttonUpState == HIGH && player.Loc < (NUMPIXELS-1)) {
+    if (buttonUpState == HIGH && player.Loc < (NUM_LEDS-1)) {
         // move player up:
         leds[player.Loc] = CRGB::Black; //erase old location
         player.Loc++;
@@ -205,7 +205,7 @@ void loop() {
     if (player.Loc == target.Loc) {
         if(player.LocUp)
         {
-            for (int i=player.Loc; i<NUMPIXELS; i++){
+            for (int i=player.Loc; i<NUM_LEDS; i++){
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
@@ -221,7 +221,7 @@ void loop() {
                 FastLED.show();
                 delay(animationDelay);
             }
-            for (int i=0; i<NUMPIXELS; i++){
+            for (int i=0; i<NUM_LEDS; i++){
                 redColor = 0;
                 greenColor = 0;
                 blueColor = 0;
@@ -237,7 +237,7 @@ void loop() {
                 FastLED.show();
                 delay(animationDelay);
             }
-            for (int i=player.Loc; i<NUMPIXELS; i++){
+            for (int i=player.Loc; i<NUM_LEDS; i++){
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
@@ -245,7 +245,7 @@ void loop() {
                 FastLED.show();
                 delay(animationDelay);
             }
-            for (int i=NUMPIXELS; i>-1; i--){
+            for (int i=NUM_LEDS; i>-1; i--){
                 redColor = 0;
                 greenColor = 0;
                 blueColor = 0;
@@ -255,7 +255,7 @@ void loop() {
         }
 
     //Restart game
-    player.Loc = random(0,NUMPIXELS);
-    target.Loc = random(0,NUMPIXELS);
+    player.Loc = random(0,NUM_LEDS);
+    target.Loc = random(0,NUM_LEDS);
     }
 }
