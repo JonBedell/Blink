@@ -1,5 +1,0 @@
-{
-    "port": "COM3",
-    "board": "arduino:avr:uno",
-    "sketch": "BlinkTest_v0_2\\BlinkTest_v0_2.ino"
-}
