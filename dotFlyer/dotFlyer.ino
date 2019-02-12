@@ -14,6 +14,7 @@
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
+#define JUMPBOOST 50
 
 //CLASSES 
 
@@ -65,7 +66,8 @@ class Dot {
     //Add acceleration to player
     void jump()
     {
-        Acceleration++;
+        //add JUMPBOOST value to players acceleration
+        Acceleration += JUMPBOOST;
         Time = 0;
     }     
 
@@ -97,10 +99,48 @@ int redColor = 0;
 int blueColor = 0;
 int greenColor = 0;
 int buttonUpState = 0; 
+int gameState = 0;
 
 //LED strip
 // This is an array of leds.  One item for each led in your strip.
 CRGB leds[NUM_LEDS];
+
+void checkWin();
+
+void checkWin() {
+    if(gameState == 0) {
+        // do nothing
+    } else if (gameState == 2) {
+        // Lose state
+        //change this to a fill
+        for (int i = 0; i < NUM_LEDS; i++){
+            leds[i].setRGB( 255, 0, 0);
+            FastLED.show();
+            delay(animationDelay);
+        }
+
+        //Restart game
+        player.Loc = random(0,NUM_LEDS);
+        target.Loc = random(0,NUM_LEDS);
+
+    } else if (gameState == 1) {
+        //Win state
+    if (targetTime >= 3000) {
+            for (int i=player.Loc; i>-1; i--){
+                int redColor = random(0,255);
+                int greenColor = random(0,255);
+                int blueColor = random(0,255);
+                leds[i].setRGB( redColor, greenColor, blueColor);
+                FastLED.show();
+                delay(animationDelay);
+            }
+    }
+
+        //Restart game
+        player.Loc = random(0,NUM_LEDS);
+        target.Loc = random(0,NUM_LEDS);
+    }
+};
 
 void setup() {
 	// sanity check delay - allows reprogramming if accidently blowing power w/leds
@@ -113,6 +153,7 @@ void setup() {
     FastLED.show();
 }
 
+//Game Loop
 void loop() {
     delay(delayval);
 
@@ -125,32 +166,12 @@ void loop() {
         // move player up:
         player.jump();
     }
-    // do maths on player
-    
+
+
 
 
     //Reset pixel locations to current locations (i.e. if Button was pressed)
     leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
     FastLED.show();
-
-//Win state
-//Merge this with next level start
-// Player should do fun animation to the ground
-// Target should do fun animation to new location
-// add obstacles as neccesary based on level
-    if (targetTime >= 3000) {
-            for (int i=player.Loc; i>-1; i--){
-                int redColor = random(0,255);
-                int greenColor = random(0,255);
-                int blueColor = random(0,255);
-                leds[i].setRGB( redColor, greenColor, blueColor);
-                FastLED.show();
-                delay(animationDelay);
-            }
-    }
-
-    //Restart game
-    player.Loc = random(0,NUM_LEDS);
-    target.Loc = random(0,NUM_LEDS);
-    }
-}
+    checkWin(gameState);
+    };
