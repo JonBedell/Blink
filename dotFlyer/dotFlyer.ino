@@ -14,7 +14,8 @@
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
-#define JUMPBOOST 50
+#define THRUST 15
+#define GRAVITY 10
 
 //CLASSES 
 
@@ -47,59 +48,92 @@ Button::Button(int pin)
         _pin = pin;
     }
 
-/*Dot Class
+/*Rocket Class
 Class that sets a dot in a specific locatio on the LED strip
 */
-class Dot {
+class Rocket {
     public:
         //location values
         int Loc;
-        int Acceleration;
-        int Time;
+        int Mass;
+        int Height;
         //colors (RGB)
         int Red;
         int Green;
         int Blue;
+        int Thrust;
+
+        int Boost()
+        {
+            Thrust = THRUST;
+        }
+
+        int endBoost()
+        {
+            Thrust = 0;
+        }
     //Constructor
-    Dot(int, int, int, int);
-
-    //Add acceleration to player
-    void jump()
-    {
-        //add JUMPBOOST value to players acceleration
-        Acceleration += JUMPBOOST;
-        Time = 0;
-    }     
-
+    Rocket(int, int, int, int);
 };
 /**
- * Dot Constructor
+ * Rocket Constructor
  * @param loc - location on LED strip
  * @param red - red value (0-255)
  * @param green - green value (0-255)
  * @param blue - blue value (0-255)
  * */
-Dot::Dot(int loc, int red, int green, int blue)
+Rocket::Rocket(int loc, int red, int green, int blue)
 {
     Loc = loc;
+    Mass = 100;
+    Height = 1; //change this later to be adjustable
     Red = red;
     Green = green;
     Blue = blue;
-    Acceleration = 0;
+    Thrust = 0;
 }
+
+/*Target Class
+Class that sets a series of dots in a specific location on the LED strip
+*/
+
+class Target {
+    public:
+        int Loc;
+        int Height;
+        int Red;
+        int Green;
+        int Blue;
+        int Time;
+        bool inTarget;
+
+        //Constructor
+        Target(int,int,int,int,int);
+};
+Target::Target(int loc, int height, int red, int green, int blue)
+{
+    Loc = loc;
+    Height = height;
+    Red = red;
+    Green = green;
+    Blue = blue;
+    Time = 0;
+    inTarget = false;
+    }
 
 //Making Objects
 // Buttons 
 Button Up(13);
 // Dots on Strip
-Dot player(0,255,0,0);
-Dot target(10,0,0,255);
+Rocket player(0,255,0,0);
+Target target(200,10,0,0,155);
 // Other variables
 int redColor = 0;
 int blueColor = 0;
 int greenColor = 0;
 int buttonUpState = 0; 
 int gameState = 0;
+long time = 0;
 
 //LED strip
 // This is an array of leds.  One item for each led in your strip.
@@ -125,8 +159,7 @@ void checkWin() {
 
     } else if (gameState == 1) {
         //Win state
-    if (targetTime >= 3000) {
-            for (int i=player.Loc; i>-1; i--){
+              for (int i=player.Loc; i>-1; i--){
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
@@ -134,7 +167,7 @@ void checkWin() {
                 FastLED.show();
                 delay(animationDelay);
             }
-    }
+  
 
         //Restart game
         player.Loc = random(0,NUM_LEDS);
@@ -149,29 +182,48 @@ void setup() {
     FastLED.addLeds<WS2812B, LED_PIN, RGB>(leds, NUM_LEDS);
     //set player on strip
     leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
-    leds[target.Loc].setRGB(target.Red, target.Green, target.Blue); // Target
+    for (int i = target.Loc; i < target.Loc + target.Height; i++){
+        leds[i].setRGB(target.Red, target.Green, target.Blue); // Target
+    }
+    
     FastLED.show();
+    time = millis();
 }
 
 //Game Loop
 void loop() {
-    delay(delayval);
-
-    // read the state of the pushbutton value:
+     // read the state of the pushbutton value:
     buttonUpState = Up.read();
-
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
     // If Button is pressed, current Dot is removed, and player location is +1'd
     if (buttonUpState == HIGH) {
         // move player up:
-        player.jump();
+        player.Boost();
+        }
+
+    player.Loc = player.Loc + (((player.Thrust - GRAVITY) * (time * time))/player.Mass);
+    if (player.Loc < 0) {
+        player.Loc = 0;
     }
 
+    if (player.Loc > target.Loc && player.Loc < target.Loc + target.Height && target.inTarget == false) {
+        target.inTarget = true;
+        target.Time = millis();
+    }
 
-
+    if (player.Loc < target.Loc && player.Loc > target.Loc + target.Height) {
+        target.inTarget = false;
+        target.Time = 0;
+    }
+    
+    if (target.inTarget == true && millis() - target.Time > 3000) {
+        gameState = 1;
+    }
 
     //Reset pixel locations to current locations (i.e. if Button was pressed)
     leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
     FastLED.show();
-    checkWin(gameState);
+    checkWin();
+    player.endBoost();
+    time = millis();
     };
