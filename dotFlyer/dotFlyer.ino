@@ -135,6 +135,16 @@ int buttonUpState = 0;
 int gameState = 0;
 long time = 0;
 
+
+//heatmap palette to be used for rocket exhaust
+DEFINE_GRADIENT_PALETTE( heatmap_gp ) {
+  0,     0,  0,  0,   //black
+128,   255,  0,  0,   //red
+224,   255,255,  0,   //bright yellow
+255,   255,255,255 }; //full white
+
+CRGBPalette16 heatPalette = heatmap_gp;
+
 //LED strip
 // This is an array of leds.  One item for each led in your strip.
 CRGB leds[NUM_LEDS];
