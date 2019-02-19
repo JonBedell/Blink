@@ -14,8 +14,9 @@
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
-#define THRUST 15
+#define THRUST 30
 #define GRAVITY 10
+#define MASS 50
 
 //CLASSES 
 
@@ -55,6 +56,7 @@ class Rocket {
     public:
         //location values
         int Loc;
+        int oldLoc;
         int Mass;
         int Height;
         //colors (RGB)
@@ -66,11 +68,15 @@ class Rocket {
         int Boost()
         {
             Thrust = THRUST;
+            Red = 255;
+            Blue = 0;
         }
 
         int endBoost()
         {
             Thrust = 0;
+            Red = 0;
+            Blue = 255;
         }
     //Constructor
     Rocket(int, int, int, int);
@@ -85,7 +91,7 @@ class Rocket {
 Rocket::Rocket(int loc, int red, int green, int blue)
 {
     Loc = loc;
-    Mass = 100;
+    Mass = MASS;
     Height = 1; //change this later to be adjustable
     Red = red;
     Green = green;
@@ -125,8 +131,8 @@ Target::Target(int loc, int height, int red, int green, int blue)
 // Buttons 
 Button Up(13);
 // Dots on Strip
-Rocket player(0,255,0,0);
-Target target(200,10,0,0,155);
+Rocket player(0,0,0,255);
+Target target(100,5,55,0,0);
 // Other variables
 int redColor = 0;
 int blueColor = 0;
@@ -136,14 +142,14 @@ int gameState = 0;
 long time = 0;
 
 
-//heatmap palette to be used for rocket exhaust
-DEFINE_GRADIENT_PALETTE( heatmap_gp ) {
-  0,     0,  0,  0,   //black
-128,   255,  0,  0,   //red
-224,   255,255,  0,   //bright yellow
-255,   255,255,255 }; //full white
+// //heatmap palette to be used for rocket exhaust
+// DEFINE_GRADIENT_PALETTE( heatmap_gp ) {
+//   0,     0,  0,  0,   //black
+// 128,   255,  0,  0,   //red
+// 224,   255,255,  0,   //bright yellow
+// 255,   255,255,255 }; //full white
 
-CRGBPalette16 heatPalette = heatmap_gp;
+// CRGBPalette16 heatPalette = heatmap_gp;
 
 //LED strip
 // This is an array of leds.  One item for each led in your strip.
@@ -202,6 +208,7 @@ void setup() {
 
 //Game Loop
 void loop() {
+    player.oldLoc = player.Loc;
      // read the state of the pushbutton value:
     buttonUpState = Up.read();
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
@@ -211,7 +218,7 @@ void loop() {
         player.Boost();
         }
 
-    player.Loc = player.Loc + (((player.Thrust - GRAVITY) * (time * time))/player.Mass);
+    //player.Loc = player.Loc + (((player.Thrust - GRAVITY) * (time * time))/player.Mass);
     if (player.Loc < 0) {
         player.Loc = 0;
     }
@@ -231,9 +238,10 @@ void loop() {
     }
 
     //Reset pixel locations to current locations (i.e. if Button was pressed)
-    leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
+    leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
+    leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
     FastLED.show();
-    checkWin();
+ //   checkWin();
     player.endBoost();
-    time = millis();
+    time = millis() - time;
     };
