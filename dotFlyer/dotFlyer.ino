@@ -9,7 +9,7 @@
 
 
 #include <FastLED.h>
-#define LED_PIN 1   // OUTPUT pin WS2812B LED Strip is attached to
+#define LED_PIN 1   // OUTPUT pin WS2812B LED Strip is attached to input is GRB not RGB
 #define NUM_LEDS 300 // number of LEDs per strip
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
@@ -88,7 +88,7 @@ class Rocket {
  * @param green - green value (0-255)
  * @param blue - blue value (0-255)
  * */
-Rocket::Rocket(int loc, int red, int green, int blue)
+Rocket::Rocket(int loc, int green, int red, int blue)
 {
     Loc = loc;
     Mass = MASS;
@@ -116,7 +116,7 @@ class Target {
         //Constructor
         Target(int,int,int,int,int);
 };
-Target::Target(int loc, int height, int red, int green, int blue)
+Target::Target(int loc, int height, int green, int red, int blue)
 {
     Loc = loc;
     Height = height;
@@ -179,7 +179,7 @@ void checkWin() {
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
-                leds[i].setRGB( redColor, greenColor, blueColor);
+                leds[i].setRGB( greenColor, redColor, blueColor);
                 FastLED.show();
                 delay(animationDelay);
             }
@@ -197,9 +197,9 @@ void setup() {
     //initialize LED Strip
     FastLED.addLeds<WS2812B, LED_PIN, RGB>(leds, NUM_LEDS);
     //set player on strip
-    leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
+    leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
     for (int i = target.Loc; i < target.Loc + target.Height; i++){
-        leds[i].setRGB(target.Red, target.Green, target.Blue); // Target
+        leds[i].setRGB(target.Green, target.Red, target.Blue); // Target
     }
     
     FastLED.show();
@@ -218,7 +218,25 @@ void loop() {
         player.Boost();
         }
 
-    //player.Loc = player.Loc + (((player.Thrust - GRAVITY) * (time * time))/player.Mass);
+
+//Equations
+//Position [Y] = Position Previous [Yp] + 0.5 * (Velocity [V] + Velocity Previous [Vp]) * delta T
+//Player.Loc =+ .5 * player.Velocity + plater.oldVelocity * time
+//needs to be min limited to 0
+
+//Velocity [V] = Vp + delta T * Acceleration [A]
+//player.Velocity =+ time * player.Acceleration
+//needs to be min limited to 0 when position = 0
+//should probably have a terminal velocity since we only have 300px to work with
+
+//Acceleration [A] = (.5 * (Thrust + Previous Thrust))/mass-gravity
+//player.Acceleration = ( .5 * (player.Thrust + player.oldThrust))/ player.Mass - GRAVITY
+//will essentially be one of 3 values:
+//                  no thrust Acceleration = -GRAVITY
+//                  thrust initializing or ending = about 40% max thrust
+//                  full thrust = 100% thrust
+
+
     if (player.Loc < 0) {
         player.Loc = 0;
     }
