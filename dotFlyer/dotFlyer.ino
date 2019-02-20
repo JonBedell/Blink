@@ -14,9 +14,10 @@
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
-#define THRUST 30
-#define GRAVITY 10
-#define MASS 50
+#define MASS 1
+#define GRAVITY 2
+#define THRUST 10
+#define FPS 60
 
 //CLASSES 
 
@@ -63,21 +64,61 @@ class Rocket {
         int Red;
         int Green;
         int Blue;
-        int Thrust;
+        float Thrust;
+        float Velocity;
+        float Acceleration;
+        float oldVelocity;
+        float oldThrust;
+        float oldTime;
+        float Time;
 
-        int Boost()
+        void Boost()
         {
             Thrust = THRUST;
             Red = 255;
             Blue = 0;
         }
 
-        int endBoost()
+        void endBoost()
         {
             Thrust = 0;
             Red = 0;
             Blue = 255;
         }
+
+        void Move()
+        {
+            oldTime = Time;
+            Time = millis();
+            oldLoc = Loc;
+            oldThrust = Thrust;
+            oldVelocity = Velocity;
+
+            //Equations
+            //Acceleration [A] = (.5 * (Thrust + Previous Thrust))/mass-gravity
+            Acceleration = ( .5 * (Thrust + oldThrust))/ Mass - GRAVITY;
+            //will essentially be one of 3 values:
+            //                  no thrust Acceleration = -GRAVITY
+            //                  thrust initializing or ending = about 40% max thrust
+            //                  full thrust = 100% thrust
+
+            //Velocity [V] = Vp + delta T * Acceleration [A]
+            Velocity =+ (Time - oldTime)/10 * Acceleration;
+            //needs to be min limited to 0 when position = 0
+            //should probably have a terminal velocity since we only have 300px to work with
+
+            //Position [Y] = Position Previous [Yp] + 0.5 * (Velocity [V] + Velocity Previous [Vp]) * delta T
+            Loc =+ .5 * Velocity + oldVelocity * ((Time - oldTime)/10);
+            //needs to be min limited to 0
+            if (Loc < 0) {
+                Loc = 0;
+            }
+            if (Loc == 0) {
+                Acceleration = 0;
+            }
+        }
+
+
     //Constructor
     Rocket(int, int, int, int);
 };
@@ -97,6 +138,8 @@ Rocket::Rocket(int loc, int green, int red, int blue)
     Green = green;
     Blue = blue;
     Thrust = 0;
+    Velocity = 0;
+    Acceleration = 0;
 }
 
 /*Target Class
@@ -139,7 +182,7 @@ int blueColor = 0;
 int greenColor = 0;
 int buttonUpState = 0; 
 int gameState = 0;
-long time = 0;
+long time = millis();
 
 
 // //heatmap palette to be used for rocket exhaust
@@ -203,12 +246,11 @@ void setup() {
     }
     
     FastLED.show();
-    time = millis();
 }
 
 //Game Loop
 void loop() {
-    player.oldLoc = player.Loc;
+    time = millis();
      // read the state of the pushbutton value:
     buttonUpState = Up.read();
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
@@ -218,48 +260,28 @@ void loop() {
         player.Boost();
         }
 
-
-//Equations
-//Position [Y] = Position Previous [Yp] + 0.5 * (Velocity [V] + Velocity Previous [Vp]) * delta T
-//Player.Loc =+ .5 * player.Velocity + plater.oldVelocity * time
-//needs to be min limited to 0
-
-//Velocity [V] = Vp + delta T * Acceleration [A]
-//player.Velocity =+ time * player.Acceleration
-//needs to be min limited to 0 when position = 0
-//should probably have a terminal velocity since we only have 300px to work with
-
-//Acceleration [A] = (.5 * (Thrust + Previous Thrust))/mass-gravity
-//player.Acceleration = ( .5 * (player.Thrust + player.oldThrust))/ player.Mass - GRAVITY
-//will essentially be one of 3 values:
-//                  no thrust Acceleration = -GRAVITY
-//                  thrust initializing or ending = about 40% max thrust
-//                  full thrust = 100% thrust
-
-
-    if (player.Loc < 0) {
-        player.Loc = 0;
-    }
+    player.Move();
 
     if (player.Loc > target.Loc && player.Loc < target.Loc + target.Height && target.inTarget == false) {
         target.inTarget = true;
         target.Time = millis();
-    }
+        }
 
     if (player.Loc < target.Loc && player.Loc > target.Loc + target.Height) {
         target.inTarget = false;
-        target.Time = 0;
-    }
+         }
     
     if (target.inTarget == true && millis() - target.Time > 3000) {
         gameState = 1;
-    }
+        }
 
-    //Reset pixel locations to current locations (i.e. if Button was pressed)
     leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
+
     FastLED.show();
- //   checkWin();
     player.endBoost();
-    time = millis() - time;
+
+    while (millis() - time < 1000/FPS){
+        delay(1);
+    }
     };
