@@ -3,8 +3,10 @@
 // Concept: Press the button to apply upward force to a dot
 // Hover the dot in target zone to win
 // Obstacles: marching ant animation zones apply force to dot in certain directions
-//bombs blow up your dot
-//moving targets
+// bombs blow up your dot
+// moving targets
+// Graph of expected outputs can be found here
+// https://docs.google.com/spreadsheets/d/1KmZhmGb0J_XdEv5SdoHkTPB8KuGs9kxIDECwj5WWMT0/edit#gid=1271681145
 // Version 0.1
 
 
@@ -102,13 +104,14 @@ class Rocket {
             //                  thrust initializing or ending = about 40% max thrust
             //                  full thrust = 100% thrust
 
-            //Velocity [V] = Vp + delta T * Acceleration [A]
-            Velocity =+ (Time - oldTime)/10 * Acceleration;
+            //Velocity [V] = Vp + delta T/1000 * Acceleration [A]
+            //equation is for seconds millis() returns an unsigned long in milliseconds
+            Velocity =+ (Time - oldTime)/1000 * Acceleration;
             //needs to be min limited to 0 when position = 0
             //should probably have a terminal velocity since we only have 300px to work with
 
             //Position [Y] = Position Previous [Yp] + 0.5 * (Velocity [V] + Velocity Previous [Vp]) * delta T
-            Loc =+ .5 * Velocity + oldVelocity * ((Time - oldTime)/10);
+            Loc =+ .5 * Velocity + oldVelocity * ((Time - oldTime)/1000);
             //needs to be min limited to 0
             if (Loc < 0) {
                 Loc = 0;
@@ -244,7 +247,7 @@ void setup() {
     for (int i = target.Loc; i < target.Loc + target.Height; i++){
         leds[i].setRGB(target.Green, target.Red, target.Blue); // Target
     }
-    
+    FastLED.setMaxRefreshRate(FPS)
     FastLED.show();
 }
 
@@ -281,7 +284,4 @@ void loop() {
     FastLED.show();
     player.endBoost();
 
-    while (millis() - time < 1000/FPS){
-        delay(1);
-    }
     };
