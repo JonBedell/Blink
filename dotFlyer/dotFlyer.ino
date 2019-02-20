@@ -247,7 +247,7 @@ void setup() {
     for (int i = target.Loc; i < target.Loc + target.Height; i++){
         leds[i].setRGB(target.Green, target.Red, target.Blue); // Target
     }
-    FastLED.setMaxRefreshRate(FPS)
+    FastLED.setMaxRefreshRate(FPS);
     FastLED.show();
 }
 
