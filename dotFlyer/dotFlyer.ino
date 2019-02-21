@@ -16,9 +16,9 @@
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
-#define MASS 1
-#define GRAVITY 2
-#define THRUST 10
+#define MASS 2
+#define GRAVITY 10
+#define THRUST 150
 #define FPS 60
 
 //CLASSES 
@@ -59,13 +59,14 @@ class Rocket {
     public:
         //location values
         int Loc;
-        int oldLoc;
         int Mass;
         int Height;
         //colors (RGB)
         int Red;
         int Green;
         int Blue;
+        float Location;
+        int oldLoc;
         float Thrust;
         float Velocity;
         float Acceleration;
@@ -106,19 +107,20 @@ class Rocket {
 
             //Velocity [V] = Vp + delta T/1000 * Acceleration [A]
             //equation is for seconds millis() returns an unsigned long in milliseconds
-            Velocity =+ (Time - oldTime)/1000 * Acceleration;
+            Velocity =+ ((Time - oldTime)/1000) * Acceleration;
             //needs to be min limited to 0 when position = 0
             //should probably have a terminal velocity since we only have 300px to work with
 
             //Position [Y] = Position Previous [Yp] + 0.5 * (Velocity [V] + Velocity Previous [Vp]) * delta T
-            Loc =+ .5 * Velocity + oldVelocity * ((Time - oldTime)/1000);
+            Location =+ (.5 * (Velocity + oldVelocity)) * ((Time - oldTime)/1000);
             //needs to be min limited to 0
-            if (Loc < 0) {
-                Loc = 0;
+            if (Location < -1) {
+                Location = 0;
             }
-            if (Loc == 0) {
-                Acceleration = 0;
-            }
+            // if (Loc == 0) {
+            //     Acceleration = 0;
+            // }
+            Loc = Location;
         }
 
 
@@ -238,6 +240,10 @@ void checkWin() {
 };
 
 void setup() {
+    Serial.begin(9600);
+    //while (!Serial) {
+    //    ; // wait for serial port to connect. Needed for native USB
+    //}
 	// sanity check delay - allows reprogramming if accidently blowing power w/leds
    	delay(2000);
     //initialize LED Strip
@@ -247,8 +253,8 @@ void setup() {
     for (int i = target.Loc; i < target.Loc + target.Height; i++){
         leds[i].setRGB(target.Green, target.Red, target.Blue); // Target
     }
+    FastLED.show();    
     FastLED.setMaxRefreshRate(FPS);
-    FastLED.show();
 }
 
 //Game Loop
@@ -262,7 +268,9 @@ void loop() {
         // move player up:
         player.Boost();
         }
-
+    if (buttonUpState == LOW){
+        player.endBoost();
+        }
     player.Move();
 
     if (player.Loc > target.Loc && player.Loc < target.Loc + target.Height && target.inTarget == false) {
@@ -282,6 +290,26 @@ void loop() {
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
 
     FastLED.show();
-    player.endBoost();
 
+
+    //Serial prints for debugging
+
+
+    Serial.print(player.Loc);  // prints a label
+    Serial.print("\t");         // prints a tab
+
+    Serial.print(player.Location);
+    Serial.print("\t");
+
+    Serial.print(player.Acceleration);
+    Serial.print("\t");
+
+    Serial.print(player.Velocity);
+    Serial.print("\t");
+
+    Serial.print(player.Thrust);
+    Serial.print("\t");
+
+    Serial.print(player.Time-player.oldTime);
+    Serial.println();
     };
