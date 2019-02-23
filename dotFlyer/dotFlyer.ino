@@ -17,8 +17,8 @@
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
 #define MASS 2
-#define GRAVITY 10
-#define THRUST 150
+#define GRAVITY 15
+#define THRUST 200
 #define FPS 60
 
 //CLASSES 
@@ -66,10 +66,12 @@ class Rocket {
         int Green;
         int Blue;
         float Location;
+        float oldLocation;
         int oldLoc;
         float Thrust;
         float Velocity;
         float Acceleration;
+        float oldAcceleration;
         float oldVelocity;
         float oldThrust;
         float oldTime;
@@ -96,6 +98,8 @@ class Rocket {
             oldLoc = Loc;
             oldThrust = Thrust;
             oldVelocity = Velocity;
+            oldLocation = Location;
+            oldAcceleration = Acceleration;
 
             //Equations
             //Acceleration [A] = (.5 * (Thrust + Previous Thrust))/mass-gravity
@@ -107,20 +111,38 @@ class Rocket {
 
             //Velocity [V] = Vp + delta T/1000 * Acceleration [A]
             //equation is for seconds millis() returns an unsigned long in milliseconds
-            Velocity =+ ((Time - oldTime)/1000) * Acceleration;
+            Velocity = oldVelocity + ((Time - oldTime)/1000) * Acceleration;
             //needs to be min limited to 0 when position = 0
             //should probably have a terminal velocity since we only have 300px to work with
 
             //Position [Y] = Position Previous [Yp] + 0.5 * (Velocity [V] + Velocity Previous [Vp]) * delta T
-            Location =+ (.5 * (Velocity + oldVelocity)) * ((Time - oldTime)/1000);
+            Location = oldLocation + (.5 * (Velocity + oldVelocity)) * ((Time - oldTime)/1000);
             //needs to be min limited to 0
-            if (Location < -1) {
+            if (Location < 0) {
                 Location = 0;
+                Acceleration = 0;
+                oldAcceleration = 0;
+                Velocity = 0;
+                oldVelocity = 0;
+            }
+            if (Location > 298 && Velocity > 50) {
+                Location = 0;
+                Acceleration = 0;
+                oldAcceleration = 0;
+                Velocity = 0;
+                oldVelocity = 0;
+            }
+            if (Location > 298 && Velocity < 50) {
+                Location = 298;
+                Acceleration = 0;
+                oldAcceleration = 0;
+                Velocity = -0.7 * Velocity;
+                oldVelocity = -0.7 * Velocity;
             }
             // if (Loc == 0) {
             //     Acceleration = 0;
             // }
-            Loc = Location;
+            Loc = (int)Location;
         }
 
 
@@ -240,7 +262,7 @@ void checkWin() {
 };
 
 void setup() {
-    Serial.begin(9600);
+    //Serial.begin(9600);
     //while (!Serial) {
     //    ; // wait for serial port to connect. Needed for native USB
     //}
@@ -254,7 +276,7 @@ void setup() {
         leds[i].setRGB(target.Green, target.Red, target.Blue); // Target
     }
     FastLED.show();    
-    FastLED.setMaxRefreshRate(FPS);
+    //FastLED.setMaxRefreshRate(FPS);
 }
 
 //Game Loop
@@ -295,7 +317,10 @@ void loop() {
     //Serial prints for debugging
 
 
-    Serial.print(player.Loc);  // prints a label
+ /*    Serial.print(player.Loc);  // prints a label
+    Serial.print("\t");         // prints a tab
+
+    Serial.print(player.oldLoc);  // prints a label
     Serial.print("\t");         // prints a tab
 
     Serial.print(player.Location);
@@ -311,5 +336,5 @@ void loop() {
     Serial.print("\t");
 
     Serial.print(player.Time-player.oldTime);
-    Serial.println();
+    Serial.println(); */
     };
