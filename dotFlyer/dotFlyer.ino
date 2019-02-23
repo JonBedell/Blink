@@ -15,7 +15,7 @@
 #define NUM_LEDS 300 // number of LEDs per strip
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
-#define animationDelay 0 //controls the speed of the win animation
+#define animationDelay 10 //controls the speed of the win animation
 #define MASS 2
 #define GRAVITY 15
 #define THRUST 200
@@ -76,6 +76,7 @@ class Rocket {
         float oldThrust;
         float oldTime;
         float Time;
+        bool Exploded;
 
         void Boost()
         {
@@ -118,6 +119,8 @@ class Rocket {
             //Position [Y] = Position Previous [Yp] + 0.5 * (Velocity [V] + Velocity Previous [Vp]) * delta T
             Location = oldLocation + (.5 * (Velocity + oldVelocity)) * ((Time - oldTime)/1000);
             //needs to be min limited to 0
+
+            //rocket is on ground
             if (Location < 0) {
                 Location = 0;
                 Acceleration = 0;
@@ -125,15 +128,19 @@ class Rocket {
                 Velocity = 0;
                 oldVelocity = 0;
             }
-            if (Location > 298 && Velocity > 50) {
+            //rocket has slammed into ceiling and exploded
+            if (Location > NUM_LEDS - 1 && Velocity > 100) {
+                Exploded = true;
                 Location = 0;
                 Acceleration = 0;
                 oldAcceleration = 0;
                 Velocity = 0;
                 oldVelocity = 0;
             }
-            if (Location > 298 && Velocity < 50) {
-                Location = 298;
+
+            //rocket has bounced off ceiling
+            if (Location > NUM_LEDS - 1 && Velocity < 100) {
+                Location = NUM_LEDS - 1;
                 Acceleration = 0;
                 oldAcceleration = 0;
                 Velocity = -0.7 * Velocity;
@@ -167,6 +174,7 @@ Rocket::Rocket(int loc, int green, int red, int blue)
     Thrust = 0;
     Velocity = 0;
     Acceleration = 0;
+    Exploded = false;
 }
 
 /*Target Class
@@ -202,7 +210,7 @@ Target::Target(int loc, int height, int green, int red, int blue)
 Button Up(13);
 // Dots on Strip
 Rocket player(0,0,0,255);
-Target target(100,5,55,0,0);
+Target target(100,15,55,0,0);
 // Other variables
 int redColor = 0;
 int blueColor = 0;
@@ -251,13 +259,15 @@ void checkWin() {
                 int blueColor = random(0,255);
                 leds[i].setRGB( greenColor, redColor, blueColor);
                 FastLED.show();
-                delay(animationDelay);
+                //delay(animationDelay);
             }
   
 
         //Restart game
-        player.Loc = random(0,NUM_LEDS);
-        target.Loc = random(0,NUM_LEDS);
+        player.Loc = 0;
+        player.Location = 0;
+        target.Loc = random(0,100)+100;
+        target.Height = random(0,15)+5;
     }
 };
 
@@ -293,14 +303,36 @@ void loop() {
     if (buttonUpState == LOW){
         player.endBoost();
         }
+    
     player.Move();
+
+    if (player.Exploded == true){
+        for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
+            redColor = 255;
+            leds[i].setRGB( 0, redColor, 0);
+            FastLED.show();
+            redColor = redColor - 17;
+            delay(animationDelay);
+        }
+        for (int j = 10; j > 0; j--){
+            for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
+                leds[i].fadeToBlackBy( 64 );
+                FastLED.show();
+                delay(animationDelay-5);
+            }
+        }
+        for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
+            leds[i].setRGB( 0, 0, 0);
+        }
+        player.Exploded = false;
+    }
 
     if (player.Loc > target.Loc && player.Loc < target.Loc + target.Height && target.inTarget == false) {
         target.inTarget = true;
         target.Time = millis();
         }
 
-    if (player.Loc < target.Loc && player.Loc > target.Loc + target.Height) {
+    if (player.Loc < target.Loc || player.Loc > target.Loc + target.Height) {
         target.inTarget = false;
          }
     
@@ -309,10 +341,13 @@ void loop() {
         }
 
     leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
+    if (target.inTarget == true){
+        leds[player.oldLoc].setRGB(target.Green,target.Red,target.Blue);
+    }
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
 
     FastLED.show();
-
+    checkWin();
 
     //Serial prints for debugging
 
@@ -337,4 +372,6 @@ void loop() {
 
     Serial.print(player.Time-player.oldTime);
     Serial.println(); */
+
+
     };
