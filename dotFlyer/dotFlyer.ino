@@ -185,10 +185,11 @@ class Target {
     public:
         int Loc;
         int Height;
+        int Step;
         int Red;
         int Green;
         int Blue;
-        int Time;
+        long Time;
         bool inTarget;
 
         //Constructor
@@ -198,6 +199,7 @@ Target::Target(int loc, int height, int green, int red, int blue)
 {
     Loc = loc;
     Height = height;
+    Step = Height/6;
     Red = red;
     Green = green;
     Blue = blue;
@@ -233,7 +235,7 @@ long time = millis();
 // This is an array of leds.  One item for each led in your strip.
 CRGB leds[NUM_LEDS];
 
-void checkWin();
+//void checkWin();
 
 void checkWin() {
     if(gameState == 0) {
@@ -253,23 +255,86 @@ void checkWin() {
 
     } else if (gameState == 1) {
         //Win state
-              for (int i=player.Loc; i>-1; i--){
+        //initialize a few variables for the win animation
+        int upDot = target.Loc + .5 * target.Height;
+        int downDot = target.Loc + .5 * target.Height;
+        int upFin = 0;
+        int downFin = 0;
+        // two way color fill across entire strip 
+        //we freeze right here...
+        while (upFin + downFin != 2){
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
-                leds[i].setRGB( greenColor, redColor, blueColor);
-                FastLED.show();
+                if (upFin == 0){
+                    leds[upDot].setRGB( greenColor, redColor, blueColor);
+                    FastLED.show();
+                    upDot = upDot + 1;
+                    if (upDot > NUM_LEDS){
+                        upFin = 1;
+                    }
+                }
+                if (downFin == 0){
+                    leds[downDot].setRGB( greenColor, redColor, blueColor);
+                    FastLED.show();
+                    downDot = downDot - 1;
+                    if (downDot < 0){
+                        downFin = 1; 
+                    }
+                }
+
                 //delay(animationDelay);
             }
-  
-
+        for (int i = 0; i < NUM_LEDS; i++){
+        leds[i].setRGB(0,0,0);
+        }
         //Restart game
-        player.Loc = 0;
-        player.Location = 0;
         target.Loc = random(0,100)+100;
         target.Height = random(0,15)+5;
+        target.Step = target.Height/6;
+        player.Velocity = 0;
+        player.oldVelocity = 0;
+        player.Acceleration = 0;
+        player.oldAcceleration = 0;
+    writeTarget();
+    FastLED.show();   
+    gameState = 0; 
     }
-};
+}
+
+void writeTarget(){
+    // Target fill
+    for (int i = target.Loc+1; i < target.Loc + target.Height; i++){
+        leds[i].setRGB(10, 0, 0); 
+    }
+    //fill interior as target time is reached
+    if (target.inTarget == true){
+    if (millis() - target.Time > 500){
+            for (int i = target.Loc+1; i < target.Loc + target.Step; i++){
+                leds[i].setRGB(target.Green, target.Red, target.Blue); 
+            }
+            for (int i = target.Loc + target.Height; i > target.Loc + target.Height - target.Step; i--){
+                leds[i].setRGB(target.Green, target.Red, target.Blue); 
+            }
+    }
+    if (millis() - target.Time > 1500){
+            for (int i = target.Loc+1; i < target.Loc + 2 * target.Step; i++){
+                leds[i].setRGB(target.Green, target.Red, target.Blue); 
+            }
+            for (int i = target.Loc + target.Height; i > target.Loc + target.Height - 2 * target.Step; i--){
+                leds[i].setRGB(target.Green, target.Red, target.Blue); 
+            }
+    }
+    if (millis() - target.Time > 2500){
+            for (int i = target.Loc+1; i < target.Loc + target.Height; i++){
+                leds[i].setRGB(target.Green, target.Red, target.Blue); 
+            }
+    }
+    }
+    // Target bookends
+    leds[target.Loc].setRGB(target.Green, target.Red, target.Blue); 
+    leds[target.Loc+target.Height].setRGB(target.Green,target.Red, target.Blue);
+}
 
 void setup() {
     //Serial.begin(9600);
@@ -282,9 +347,7 @@ void setup() {
     FastLED.addLeds<WS2812B, LED_PIN, RGB>(leds, NUM_LEDS);
     //set player on strip
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
-    for (int i = target.Loc; i < target.Loc + target.Height; i++){
-        leds[i].setRGB(target.Green, target.Red, target.Blue); // Target
-    }
+    writeTarget();
     FastLED.show();    
     //FastLED.setMaxRefreshRate(FPS);
 }
@@ -340,10 +403,9 @@ void loop() {
         gameState = 1;
         }
 
+
     leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
-    if (target.inTarget == true){
-        leds[player.oldLoc].setRGB(target.Green,target.Red,target.Blue);
-    }
+    writeTarget(); //displays target
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
 
     FastLED.show();
