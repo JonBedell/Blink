@@ -1,6 +1,11 @@
 //    Shrapnel.h
 //library for physics affected dots with a defineable rgb value
 
+#define MASS 2
+#define GRAVITY 15
+#define THRUST 200
+#define FPS 60
+
 class Shrapnel
 {  
     public:

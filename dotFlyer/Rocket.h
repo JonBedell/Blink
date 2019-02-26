@@ -1,6 +1,12 @@
 /*Rocket Class
 Class that sets a dot in a specific locatio on the LED strip
 */
+
+#define MASS 2
+#define GRAVITY 15
+#define THRUST 200
+#define FPS 60
+
 class Rocket {
     public:
         //location values
