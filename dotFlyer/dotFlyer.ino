@@ -60,20 +60,13 @@ void checkWin() {
         //Win state
         //initialize a few variables for the win animation
         
-        int shrapnelRed = 0;
-        int shrapnelGreen = 0;
-        int shrapnelBlue = 0;  
         int shrapnelLocation = target.Height;
-        int shrapnelVelocity = random(0,200) - 100;
+        Shrapnel shrapnels[target.Height];
 
-    for (int i = 0; i < target.Height; i++)
+    for (int number = 0; number < target.Height; number++)
     {
-        shrapnelRed = random(0,255);
-        shrapnelGreen = random(0,255);
-        shrapnelBlue = random(0,255);
-        Shrapnel i(shrapnelRed, shrapnelGreen, shrapnelBlue, shrapnelLocation, shrapnelVelocity);
+        shrapnels[number]=Shrapnel(shrapnelLocation);
         shrapnelLocation = shrapnelLocation + 1;
-        shrapnelVelocity = random(0,200) - 100;
     }
 
  /*     int upDot = target.Loc + .5 * target.Height;
@@ -191,10 +184,10 @@ void loop() {
     player.Move();
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    for (int i = 0; i < shrapnelCount(); i++)
+  /*   for (int i = 0; i < shrapnelCount(); i++)
     {
         i.Move();
-    } 
+    }  */
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (player.Exploded == true){

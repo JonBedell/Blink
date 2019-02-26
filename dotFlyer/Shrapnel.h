@@ -16,21 +16,20 @@ class Shrapnel
         int initialVelocity;
         void move();
         void kill();
-    private:
         float Location;
         float Velocity;
         float Acceleration;
     //constructor
-    Shrapnel(int, int, int, int, int);    
+    Shrapnel(int);    
 };
 
-Shrapnel::Shrapnel(int s_Red, int s_Green, int s_Blue, int s_Loc, int s_initialVelocity)
+Shrapnel::Shrapnel(int s_Loc)
 {
-    Red = s_Red;
-    Green = s_Green;
-    Blue = s_Blue;
+    Red = random(0,255);
+    Green = random(0,255);
+    Blue = random(0,255);
     Loc = s_Loc;
-    Velocity = s_initialVelocity;
+    Velocity = random(0,200) - 100;
     Acceleration = 0;
     Location = s_Loc;
 }
