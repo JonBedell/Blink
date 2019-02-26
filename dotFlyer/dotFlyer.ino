@@ -24,7 +24,6 @@
 #include "Button.h"
 #include "Target.h"
 
-
 //Making Objects 
 Button Up(13); //Buttons go here
 Rocket player(0,0,0,255); //the player 
@@ -60,13 +59,30 @@ void checkWin() {
     } else if (gameState == 1) {
         //Win state
         //initialize a few variables for the win animation
-        int upDot = target.Loc + .5 * target.Height;
+        
+        int shrapnelRed = 0;
+        int shrapnelGreen = 0;
+        int shrapnelBlue = 0;  
+        int shrapnelLocation = target.Height;
+        int shrapnelVelocity = random(0,200) - 100;
+
+    for (int i = 0; i < target.Height; i++)
+    {
+        shrapnelRed = random(0,255);
+        shrapnelGreen = random(0,255);
+        shrapnelBlue = random(0,255);
+        Shrapnel i(shrapnelRed, shrapnelGreen, shrapnelBlue, shrapnelLocation, shrapnelVelocity);
+        shrapnelLocation = shrapnelLocation + 1;
+        shrapnelVelocity = random(0,200) - 100;
+    }
+
+ /*     int upDot = target.Loc + .5 * target.Height;
         int downDot = target.Loc + .5 * target.Height;
         int upFin = 0;
         int downFin = 0;
         // two way color fill across entire strip 
-        //we freeze right here...
-        while (upFin + downFin != 2){
+        while (upFin + downFin != 2)
+            {
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
@@ -88,7 +104,8 @@ void checkWin() {
                 }
 
                 //delay(animationDelay);
-            }
+            } */
+
         for (int i = 0; i < NUM_LEDS; i++){
         leds[i].setRGB(0,0,0);
         }
@@ -172,6 +189,13 @@ void loop() {
         }
     
     player.Move();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    for (int i = 0; i < shrapnelCount(); i++)
+    {
+        i.Move();
+    } 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (player.Exploded == true){
         for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
