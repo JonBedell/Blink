@@ -24,6 +24,7 @@
 #include "Button.h"
 #include "Target.h"
 
+
 //Making Objects 
 Button Up(13); //Buttons go here
 Rocket player(0,0,0,255); //the player 
@@ -105,8 +106,8 @@ void checkWin() {
     }
 }
 
-void writeTarget(){
-    // Target fill
+void writeTarget() // Target fill
+    {
     for (int i = target.Loc+1; i < target.Loc + target.Height; i++){
         leds[i].setRGB(10, 0, 0); 
     }
