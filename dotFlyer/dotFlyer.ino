@@ -37,6 +37,8 @@ int buttonUpState = 0;
 int gameState = 0;
 long time = millis();
 int shrapenlInstances = 0;
+bool shrapnelExists = false;
+
 
 //LED strip
 CRGB leds[NUM_LEDS]; // This is an array of leds.  One item for each led in your strip.
@@ -61,9 +63,10 @@ void checkWin() {
         //Win state
         //initialize a few variables for the win animation
         
+        shrapnelExists = true;
         shrapenlInstances = target.Height;
         int shrapnelLocation = target.Height;
-        Shrapnel shrapnels[target.Height];
+        Shrapnel shrapnels[target.Height-1]; //this will need to be added back once shrapnels are able to kill themselves
 
     for (int number = 0; number < target.Height; number++)
     {
@@ -155,10 +158,12 @@ void writeTarget() // Target fill
 
 void writeShrapnel()
 {
-    for (int i = 0; i < shrapenlInstances; i++)
-    {  
-        shrapnels[i].Move();
-        leds[shrapnels[i].Loc].setRGB(shrapnels[i].shrapnels[i],target.Red, shrapnels[i].Blue);
+    if (shrapnelExists == true){
+        for (int i = 0; i < shrapenlInstances; i++)
+        {  
+            shrapnels[i].Move();
+            leds[shrapnels[i].Loc].setRGB(shrapnels[i].shrapnels[i],target.Red, shrapnels[i].Blue);
+        }
     }
 }
 
@@ -174,7 +179,7 @@ void setup() {
     //set player on strip
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
     writeTarget();
-    FastLED.show();    
+    FastLED.show(); 
     //FastLED.setMaxRefreshRate(FPS);
 }
 
