@@ -36,6 +36,7 @@ int greenColor = 0;
 int buttonUpState = 0; 
 int gameState = 0;
 long time = millis();
+int shrapenlInstances = 0;
 
 //LED strip
 CRGB leds[NUM_LEDS]; // This is an array of leds.  One item for each led in your strip.
@@ -60,12 +61,14 @@ void checkWin() {
         //Win state
         //initialize a few variables for the win animation
         
+        shrapenlInstances = target.Height;
         int shrapnelLocation = target.Height;
         Shrapnel shrapnels[target.Height];
 
     for (int number = 0; number < target.Height; number++)
     {
-        shrapnels[number]=Shrapnel(shrapnelLocation);
+        shrapnels[number].Location = shrapnelLocation;
+        shrapnels[number].Loc = shrapnelLocation;
         shrapnelLocation = shrapnelLocation + 1;
     }
 
@@ -150,6 +153,15 @@ void writeTarget() // Target fill
     leds[target.Loc+target.Height].setRGB(target.Green,target.Red, target.Blue);
 }
 
+void writeShrapnel()
+{
+    for (int i = 0; i < shrapenlInstances; i++)
+    {  
+        shrapnels[i].Move();
+        leds[shrapnels[i].Loc].setRGB(shrapnels[i].shrapnels[i],target.Red, shrapnels[i].Blue);
+    }
+}
+
 void setup() {
     //Serial.begin(9600);
     //while (!Serial) {
@@ -226,7 +238,9 @@ void loop() {
 
 
     leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
+
     writeTarget(); //displays target
+    writeShrapnel(); //moves & displays shrapnels
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
 
     FastLED.show();
