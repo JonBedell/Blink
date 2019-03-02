@@ -5,35 +5,34 @@
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
 
-// map<string, int> colorPalette = new map<string, int>();
-// colorPalette["red"] = CHSV(69,69,69);
+//map<string, CRGB> colorPalette = new map<string, CRGB>();
+//colorPalette["red"] = CHSV(69,69,69);
 
-CRGB leds[NUM_LEDS];
-// CRGB rainbows[7];
-// rainbows[0] = CRGB::Red;
-// rainbows[1] = CRGB::Orange;
-// rainbows[2] = CRGB::Yellow;
-// rainbows[3] = CRGB::Green;
-// rainbows[4] = CRGB::Blue;
-// rainbows[5] = CRGB::Indigo;
-// rainbows[6] = CRGB::Violet;
+
+CRGB rainbows[14] = {
+  CRGB::Red,
+  CRGB::Orange,
+  CRGB::Yellow,
+  CRGB::Green,
+  CRGB::Blue,
+  CRGB::Indigo,
+  CRGB::Violet,
+  CRGB::Red,
+  CRGB::Orange,
+  CRGB::Yellow,
+  CRGB::Green,
+  CRGB::Blue,
+  CRGB::Indigo,
+  CRGB::Violet
+};
 int iterator = 0;
 
-void setup() { 
-    FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS); 
-    
-}
-void loop()
-{
-    for (int i = iterator; i < NUM_LEDS; i+7)
+CRGB leds[NUM_LEDS];
+void setup() { FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS); }
+void loop(){
+    for (int i=1; i < NUM_LEDS ; i++)
     {
-        leds[i] = CRGB::Red;
-        leds[i+1] = CRGB::Orange;
-        leds[i+2] = CRGB::Yellow;
-        leds[i+3] = CRGB::Green;
-        leds[i+4] = CRGB::Blue;
-        leds[i+5] = CRGB::Indigo;
-        leds[i+6] = CRGB::Violet;
+        leds[i] = rainbows[(i%7)+iterator];
     }
     if (iterator < 6)
     {
@@ -43,4 +42,6 @@ void loop()
     {
         iterator = 0;
     }
+    FastLED.show();
+    delay(delayval);
 }
