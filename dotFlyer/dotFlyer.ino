@@ -184,7 +184,7 @@ void setup() {
     //set player on strip
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
     writeTarget();
-    FastLED.show();    
+    FastLED.show(); 
     //FastLED.setMaxRefreshRate(FPS);
 }
 
