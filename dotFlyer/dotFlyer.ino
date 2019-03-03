@@ -38,6 +38,7 @@ int blueColor = 0;
 int greenColor = 0;
 int buttonUpState = 0; 
 int gameState = 0;
+int wins = 0;
 long time = millis();
 bool shrapnelAnimate = false;
 
@@ -62,15 +63,12 @@ void checkWin() {
 
     } else if (gameState == 1) {
         //Win state
-        //initialize a few variables for the win animation
-        
+
+        wins += 1;
         shrapnelAnimate = true;
         shrapTop.Loc = target.Loc + target.Height;
         shrapMid.Loc = target.Loc + target.Height/2;
         shrapBot.Loc = target.Loc;
-
-
-
 
  /*     int upDot = target.Loc + .5 * target.Height;
         int downDot = target.Loc + .5 * target.Height;
@@ -106,16 +104,30 @@ void checkWin() {
         leds[i].setRGB(0,0,0);
         }
         //Restart game
+        if (wins < 3){
         target.Loc = random(0,100)+100;
         target.Height = random(0,15)+5;
         target.Step = target.Height/6;
+        } else {
+        target.Loc = 0;
+        target.Height = 10;
+        target.Step = target.Height/6;
+        }
+        if (wins == 4){
+            //full win animation goes here
+            //fully restart game
+            wins = 0;
+            target.Loc = random(0,100)+100;
+            target.Height = random(0,15)+5;
+            target.Step = target.Height/6;
+            player.Location = 0;
+            player.Loc = 0;
+        }
         player.Velocity = 0;
         player.oldVelocity = 0;
         player.Acceleration = 0;
         player.oldAcceleration = 0;
-    writeTarget();
-    FastLED.show();   
-    gameState = 0; 
+        gameState = 0; 
     }
 }
 
@@ -172,6 +184,55 @@ void writeShrapnel()
     
 } 
 
+void writePlayerAway()
+{
+    leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
+}
+
+void writePlayer()
+{
+    leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
+}
+
+void checkExplosion()
+{
+        if (player.Exploded == true){
+        for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
+            redColor = 255;
+            leds[i].setRGB( 0, redColor, 0);
+            FastLED.show();
+            redColor = redColor - 17;
+            delay(animationDelay);
+        }
+        for (int j = 10; j > 0; j--){
+            for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
+                leds[i].fadeToBlackBy( 64 );
+                FastLED.show();
+                delay(animationDelay-5);
+            }
+        }
+        for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
+            leds[i].setRGB( 0, 0, 0);
+        }
+        player.Exploded = false;
+    }
+}
+
+void checkTarget()
+{
+        if (player.Loc > target.Loc && player.Loc < target.Loc + target.Height && target.inTarget == false) {
+        target.inTarget = true;
+        target.Time = millis();
+        }
+
+    if (player.Loc < target.Loc || player.Loc > target.Loc + target.Height) {
+        target.inTarget = false;
+         }
+    
+    if (target.inTarget == true && millis() - target.Time > 3000) {
+        gameState = 1;
+        }
+}
 void setup() {
     //Serial.begin(9600);
     //while (!Serial) {
@@ -205,47 +266,13 @@ void loop() {
     
     player.Move();
 
+    checkExplosion();
+    checkTarget();
 
-    if (player.Exploded == true){
-        for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
-            redColor = 255;
-            leds[i].setRGB( 0, redColor, 0);
-            FastLED.show();
-            redColor = redColor - 17;
-            delay(animationDelay);
-        }
-        for (int j = 10; j > 0; j--){
-            for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
-                leds[i].fadeToBlackBy( 64 );
-                FastLED.show();
-                delay(animationDelay-5);
-            }
-        }
-        for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
-            leds[i].setRGB( 0, 0, 0);
-        }
-        player.Exploded = false;
-    }
-
-    if (player.Loc > target.Loc && player.Loc < target.Loc + target.Height && target.inTarget == false) {
-        target.inTarget = true;
-        target.Time = millis();
-        }
-
-    if (player.Loc < target.Loc || player.Loc > target.Loc + target.Height) {
-        target.inTarget = false;
-         }
-    
-    if (target.inTarget == true && millis() - target.Time > 3000) {
-        gameState = 1;
-        }
-
-
-    leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
-
+    writePlayerAway();
     writeTarget(); //displays target
     writeShrapnel(); //moves & displays shrapnels
-    leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
+    writePlayer();
     FastLED.show();
     checkWin();
 
