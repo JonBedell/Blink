@@ -28,6 +28,9 @@
 Button Up(13); //Buttons go here
 Rocket player(0,0,0,255); //the player 
 Target target(100,15,55,0,0); //the target
+Shrapnel shrapTop;
+Shrapnel shrapMid;
+Shrapnel shrapBot;
 
 // Other variables
 int redColor = 0;
@@ -36,7 +39,7 @@ int greenColor = 0;
 int buttonUpState = 0; 
 int gameState = 0;
 long time = millis();
-int shrapenlInstances = 0;
+bool shrapnelAnimate = false;
 
 //LED strip
 CRGB leds[NUM_LEDS]; // This is an array of leds.  One item for each led in your strip.
@@ -61,16 +64,13 @@ void checkWin() {
         //Win state
         //initialize a few variables for the win animation
         
-        shrapenlInstances = target.Height;
-        int shrapnelLocation = target.Height;
-        Shrapnel shrapnels[target.Height];
+        shrapnelAnimate = true;
+        shrapTop.Loc = target.Loc + target.Height;
+        shrapMid.Loc = target.Loc + target.Height/2;
+        shrapBot.Loc = target.Loc;
 
-    for (int number = 0; number < target.Height; number++)
-    {
-        shrapnels[number].Location = shrapnelLocation;
-        shrapnels[number].Loc = shrapnelLocation;
-        shrapnelLocation = shrapnelLocation + 1;
-    }
+
+
 
  /*     int upDot = target.Loc + .5 * target.Height;
         int downDot = target.Loc + .5 * target.Height;
@@ -155,12 +155,22 @@ void writeTarget() // Target fill
 
 void writeShrapnel()
 {
-    for (int i = 0; i < shrapenlInstances; i++)
-    {  
-        shrapnels[i].Move();
-        leds[shrapnels[i].Loc].setRGB(shrapnels[i].shrapnels[i],target.Red, shrapnels[i].Blue);
+    if (shrapnelAnimate == true){
+        leds[shrapTop.Loc].setRGB(0,0,0);
+        leds[shrapMid.Loc].setRGB(0,0,0);
+        leds[shrapTop.Loc].setRGB(0,0,0); 
+        shrapTop.Move();
+        shrapMid.Move();
+        shrapBot.Move();
+        leds[shrapTop.Loc].setRGB(shrapTop.Green,shrapTop.Red, shrapTop.Blue);
+        leds[shrapMid.Loc].setRGB(shrapMid.Green,shrapTop.Red, shrapMid.Blue);
+        leds[shrapTop.Loc].setRGB(shrapBot.Green,shrapBot.Red, shrapBot.Blue);
+        if (shrapTop.Loc < 0 && shrapMid.Loc < 0 && shrapBot.Loc < 0){
+            shrapnelAnimate = false;
+        }
     }
-}
+    
+} 
 
 void setup() {
     //Serial.begin(9600);
@@ -195,12 +205,6 @@ void loop() {
     
     player.Move();
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /*   for (int i = 0; i < shrapnelCount(); i++)
-    {
-        i.Move();
-    }  */
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (player.Exploded == true){
         for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
@@ -242,7 +246,6 @@ void loop() {
     writeTarget(); //displays target
     writeShrapnel(); //moves & displays shrapnels
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
-
     FastLED.show();
     checkWin();
 

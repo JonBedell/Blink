@@ -1,6 +1,5 @@
-/*Rocket Class
-Class that sets a dot in a specific locatio on the LED strip
-*/
+//Rocket Class
+//Class that sets a dot in a specific locatio on the LED strip
 
 #define MASS 2
 #define GRAVITY 15
