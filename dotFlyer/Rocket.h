@@ -32,15 +32,11 @@ class Rocket {
         void Boost()
         {
             Thrust = THRUST;
-            Red = 255;
-            Blue = 0;
         }
 
         void endBoost()
         {
             Thrust = 0;
-            Red = 0;
-            Blue = 255;
         }
 
         void Move()
@@ -92,6 +88,24 @@ class Rocket {
             //rocket has bounced off ceiling
             if (Location > NUM_LEDS - 1 && Velocity < 100) {
                 Location = NUM_LEDS - 1;
+                Acceleration = 0;
+                oldAcceleration = 0;
+                Velocity = -0.7 * Velocity;
+                oldVelocity = -0.7 * Velocity;
+            }
+
+            //rocket has slammed into ground and exploded
+            if (Location >= 0 && Velocity > 100) {
+                Exploded = true;
+                Location = 0;
+                Acceleration = 0;
+                oldAcceleration = 0;
+                Velocity = 0;
+                oldVelocity = 0;
+            }
+
+            //rocket has bounced off ground
+            if (Location >= 0 && Velocity < 100) {
                 Acceleration = 0;
                 oldAcceleration = 0;
                 Velocity = -0.7 * Velocity;

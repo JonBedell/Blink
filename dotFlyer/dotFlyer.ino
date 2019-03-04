@@ -26,6 +26,8 @@
 
 //Making Objects 
 Button Up(13); //Buttons go here
+Button A(11);
+Button B(10);
 Rocket player(0,0,0,255); //the player 
 Target target(100,15,55,0,0); //the target
 Shrapnel shrapTop;
@@ -187,11 +189,21 @@ void writeShrapnel()
 void writePlayerAway()
 {
     leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
+    leds[player.oldLoc - 1].setRGB(0,0,0);
+    leds[player.oldLoc - 2].setRGB(0,0,0);
+    leds[player.oldLoc - 3].setRGB(0,0,0);
+    leds[player.oldLoc - 4].setRGB(0,0,0);
 }
 
 void writePlayer()
 {
-    leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
+    leds[player.Loc].setRGB(player.Green, player.Red, player.Blue); // Player.
+    if (buttonUpState == HIGH) {
+    leds[player.Loc - 1].setRGB(255,255,0);
+    leds[player.Loc - 2].setRGB(191,255,0);
+    leds[player.Loc - 3].setRGB(128,255,0);
+    leds[player.Loc - 4].setRGB(0,255,0);
+    }
 }
 
 void checkExplosion()
@@ -255,9 +267,7 @@ void loop() {
      // read the state of the pushbutton value:
     buttonUpState = Up.read();
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-    // If Button is pressed, current Dot is removed, and player location is +1'd
     if (buttonUpState == HIGH) {
-        // move player up:
         player.Boost();
         }
     if (buttonUpState == LOW){
