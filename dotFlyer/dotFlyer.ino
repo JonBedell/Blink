@@ -202,7 +202,7 @@ void writePlayer()
     leds[player.Loc - 1].setRGB(255,255,0);
     leds[player.Loc - 2].setRGB(191,255,0);
     leds[player.Loc - 3].setRGB(128,255,0);
-    leds[player.Loc - 4].setRGB(0,255,0);
+    leds[player.Loc - 4].setRGB(255,255,0);
     }
 }
 
