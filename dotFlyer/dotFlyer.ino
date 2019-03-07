@@ -14,13 +14,8 @@
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 10 //controls the speed of the win animation
-#define MASS 2
-#define GRAVITY 15
-#define THRUST 200
-#define FPS 60
 
 #include "Rocket.h"
-#include "Shrapnel.h"
 #include "Button.h"
 #include "Target.h"
 
@@ -30,9 +25,6 @@ Button A(11);
 Button B(10);
 Rocket player(0,0,0,255); //the player 
 Target target(100,15,55,0,0); //the target
-Shrapnel shrapTop;
-Shrapnel shrapMid;
-Shrapnel shrapBot;
 
 // Other variables
 int redColor = 0;
@@ -42,7 +34,10 @@ int buttonUpState = 0;
 int gameState = 0;
 int wins = 0;
 long time = millis();
-bool shrapnelAnimate = false;
+int flame1 = 0;
+int flame2 = 0;
+int flame3 = 0;
+int flame4 = 0;
 
 //LED strip
 CRGB leds[NUM_LEDS]; // This is an array of leds.  One item for each led in your strip.
@@ -66,11 +61,11 @@ void checkWin() {
     } else if (gameState == 1) {
         //Win state
 
-        wins += 1;
-        shrapnelAnimate = true;
-        shrapTop.Loc = target.Loc + target.Height;
-        shrapMid.Loc = target.Loc + target.Height/2;
-        shrapBot.Loc = target.Loc;
+        wins = wins + 1;
+        //shrapnelAnimate = true;
+        //shrapTop.Loc = target.Loc + target.Height;
+        //shrapMid.Loc = target.Loc + target.Height/2;
+        //shrapBot.Loc = target.Loc;
 
  /*     int upDot = target.Loc + .5 * target.Height;
         int downDot = target.Loc + .5 * target.Height;
@@ -117,6 +112,7 @@ void checkWin() {
         }
         if (wins == 4){
             //full win animation goes here
+
             //fully restart game
             wins = 0;
             target.Loc = random(0,100)+100;
@@ -167,42 +163,31 @@ void writeTarget() // Target fill
     leds[target.Loc+target.Height].setRGB(target.Green,target.Red, target.Blue);
 }
 
-void writeShrapnel()
-{
-    if (shrapnelAnimate == true){
-        leds[shrapTop.Loc].setRGB(0,0,0);
-        leds[shrapMid.Loc].setRGB(0,0,0);
-        leds[shrapTop.Loc].setRGB(0,0,0); 
-        shrapTop.Move();
-        shrapMid.Move();
-        shrapBot.Move();
-        leds[shrapTop.Loc].setRGB(shrapTop.Green,shrapTop.Red, shrapTop.Blue);
-        leds[shrapMid.Loc].setRGB(shrapMid.Green,shrapTop.Red, shrapMid.Blue);
-        leds[shrapTop.Loc].setRGB(shrapBot.Green,shrapBot.Red, shrapBot.Blue);
-        if (shrapTop.Loc < 0 && shrapMid.Loc < 0 && shrapBot.Loc < 0){
-            shrapnelAnimate = false;
-        }
-    }
-    
-} 
-
 void writePlayerAway()
 {
     leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
-    leds[player.oldLoc - 1].setRGB(0,0,0);
-    leds[player.oldLoc - 2].setRGB(0,0,0);
-    leds[player.oldLoc - 3].setRGB(0,0,0);
-    leds[player.oldLoc - 4].setRGB(0,0,0);
+    flame1 = player.oldLoc - 1;
+    flame2 = player.oldLoc - 2;
+    flame3 = player.oldLoc - 3;
+    flame4 = player.oldLoc - 4;    
+    leds[flame1].setRGB(0,0,0);
+    leds[flame2].setRGB(0,0,0);
+    leds[flame3].setRGB(0,0,0);
+    leds[flame4].setRGB(0,0,0);
 }
 
 void writePlayer()
 {
     leds[player.Loc].setRGB(player.Green, player.Red, player.Blue); // Player.
     if (buttonUpState == HIGH) {
-    leds[player.Loc - 1].setRGB(255,255,0);
-    leds[player.Loc - 2].setRGB(191,255,0);
-    leds[player.Loc - 3].setRGB(128,255,0);
-    leds[player.Loc - 4].setRGB(255,255,0);
+    flame1 = player.Loc - 1;
+    flame2 = player.Loc - 2;
+    flame3 = player.Loc - 3;
+    flame4 = player.Loc - 4;  
+    leds[flame1].setRGB(255,255,0);
+    leds[flame2].setRGB(191,255,0);
+    leds[flame3].setRGB(128,255,0);
+    leds[flame4].setRGB(0,100,0);
     }
 }
 
@@ -258,7 +243,6 @@ void setup() {
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
     writeTarget();
     FastLED.show(); 
-    //FastLED.setMaxRefreshRate(FPS);
 }
 
 //Game Loop
@@ -281,7 +265,6 @@ void loop() {
 
     writePlayerAway();
     writeTarget(); //displays target
-    writeShrapnel(); //moves & displays shrapnels
     writePlayer();
     FastLED.show();
     checkWin();
@@ -289,7 +272,7 @@ void loop() {
     //Serial prints for debugging
 
 
- /*    Serial.print(player.Loc);  // prints a label
+    /* Serial.print(player.Loc);  // prints a label
     Serial.print("\t");         // prints a tab
 
     Serial.print(player.oldLoc);  // prints a label
@@ -308,7 +291,7 @@ void loop() {
     Serial.print("\t");
 
     Serial.print(player.Time-player.oldTime);
-    Serial.println(); */
-
+    Serial.println();
+ */
 
     };

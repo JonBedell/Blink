@@ -4,7 +4,6 @@
 #define MASS 2
 #define GRAVITY 15
 #define THRUST 200
-#define FPS 60
 
 class Rocket {
     public:
@@ -95,7 +94,7 @@ class Rocket {
             }
 
             //rocket has slammed into ground and exploded
-            if (Location >= 0 && Velocity > 100) {
+            if (Location <= 0 && Velocity > 100) {
                 Exploded = true;
                 Location = 0;
                 Acceleration = 0;
@@ -105,7 +104,7 @@ class Rocket {
             }
 
             //rocket has bounced off ground
-            if (Location >= 0 && Velocity < 100) {
+            if (Location <= 0 && Velocity < 100) {
                 Acceleration = 0;
                 oldAcceleration = 0;
                 Velocity = -0.7 * Velocity;
