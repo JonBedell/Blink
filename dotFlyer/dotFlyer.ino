@@ -33,6 +33,7 @@ int blueColor = 0;
 int greenColor = 0;
 int buttonUpState = 0; 
 int gameState = 0;
+int loopCounter = 0;
 int wins = 0;
 long time = millis();
 int flame1 = 0;
@@ -113,18 +114,110 @@ void checkWin() {
         }
         if (wins == 4){
             //full win animation goes here
- /*            time = millis();
-            Firework firework1();
-            Firework firework2();
-            Firework firework3();
+            time = millis();
+            Firework firework1;
+            Firework firework2;
+            Firework firework3;
+            leds[firework1.Loc].setRGB(firework1.Green,firework1.Blue,firework1.Red);
+            leds[firework2.Loc].setRGB(firework2.Green,firework2.Blue,firework2.Red);
+            leds[firework3.Loc].setRGB(firework3.Green,firework3.Blue,firework3.Red);
+
             while (millis() - time <= 10000){
+
+                //remove old fireworks & flames
+
+                //firework 1
+                leds[firework1.Loc].setRGB(0,0,0);
+                writeFlameAway(firework1.Loc);
+                //firework 2
+                leds[firework2.Loc].setRGB(0,0,0);
+                writeFlameAway(firework2.Loc);     
+                //firework 3         
+                leds[firework3.Loc].setRGB(0,0,0);
+                writeFlameAway(firework3.Loc);    
+
+                //write new fireworks and flames
+
+                //firework 1
                 firework1.Move();
+                leds[firework1.Loc].setRGB(firework1.Green,firework1.Blue,firework1.Red);
+                writeFlame(firework1.Loc);
+                //firework 2
                 firework2.Move();
+                leds[firework2.Loc].setRGB(firework2.Green,firework2.Blue,firework2.Red);
+                writeFlame(firework2.Loc);
+                //firework 3
                 firework3.Move();
-                if (firework1.Explode == true){
-                    
+                leds[firework3.Loc].setRGB(firework3.Green,firework3.Blue,firework3.Red);
+                writeFlame(firework3.Loc);
+                //display stuff
+                FastLED.show();
+                //set frame at which explosion occurs
+                if (firework1.Exploded == true && firework1.explodeFrame == -1){
+                    firework1.explodeFrame = loopCounter;
                 }
-            } */
+                if (firework2.Exploded == true && firework1.explodeFrame == -1){
+                    firework2.explodeFrame = loopCounter;
+                }
+                if (firework3.Exploded == true && firework1.explodeFrame == -1){
+                    firework3.explodeFrame = loopCounter;
+                }
+
+                //burst animations
+
+                if (firework1.Exploded == true){
+                    int redColor = random(0,255);
+                    int greenColor = random(0,255);
+                    int blueColor = 0;
+                    if (firework1.explodeFrame - loopCounter < 20){
+                        for (int i = firework1.Loc; i < firework1.explodeFrame - loopCounter; i++ ){
+                            leds[i].setRGB(greenColor,redColor,blueColor);
+                        }
+                    } else {
+                        firework1.burstFin == true;
+                    }
+                }
+
+                if (firework2.Exploded == true){
+                    int redColor = random(0,0);
+                    int greenColor = random(0,255);
+                    int blueColor = random(0,255);
+                    if (firework2.explodeFrame - loopCounter < 20){
+                        for (int i = firework2.Loc; i < firework2.explodeFrame - loopCounter; i++ ){
+                            leds[i].setRGB(greenColor,redColor,blueColor);
+                        }
+                    } else {
+                        firework2.burstFin == true;
+                    }
+                }
+                if (firework3.Exploded == true){
+                    int redColor = random(0,0);
+                    int greenColor = random(0,255);
+                    int blueColor = random(0,255);
+                    if (firework3.explodeFrame - loopCounter < 20){
+                        for (int i = firework3.Loc; i < firework3.explodeFrame - loopCounter; i++ ){
+                            leds[i].setRGB(greenColor,redColor,blueColor);
+                        }
+                    } else {
+                        firework3.burstFin == true;
+                    }
+                }
+
+                FastLED.show();
+
+                //reset firworks if burst animation has completed
+                if (firework1.burstFin == true){
+                    firework1.Reset();
+                }
+                if (firework2.burstFin == true){
+                    firework2.Reset();
+                }
+                if (firework3.burstFin == true){
+                    firework3.Reset();
+                }
+                loopCounter = loopCounter + 1;
+            }
+
             //fully restart game
             wins = 0;
             target.Loc = random(0,100)+100;
@@ -139,6 +232,28 @@ void checkWin() {
         player.oldAcceleration = 0;
         gameState = 0; 
     }
+}
+
+void writeFlameAway(int y){
+    flame1 = y - 1;
+    flame2 = y - 2;
+    flame3 = y - 3;
+    flame4 = y - 4; 
+    leds[flame1].setRGB(0,0,0);
+    leds[flame2].setRGB(0,0,0);
+    leds[flame3].setRGB(0,0,0);
+    leds[flame4].setRGB(0,0,0);  
+}
+
+void writeFlame(int y){
+    flame1 = y - 1;
+    flame2 = y - 2;
+    flame3 = y - 3;
+    flame4 = y - 4; 
+    leds[flame1].setRGB(255,255,0);
+    leds[flame2].setRGB(191,255,0);
+    leds[flame3].setRGB(128,255,0);
+    leds[flame4].setRGB(0,100,0);
 }
 
 void writeBackground()
@@ -191,28 +306,14 @@ void writeTarget() // Target fill
 void writePlayerAway()
 {
     leds[player.oldLoc].setRGB(0,0,0);// Remove old player dots
-    flame1 = player.oldLoc - 1;
-    flame2 = player.oldLoc - 2;
-    flame3 = player.oldLoc - 3;
-    flame4 = player.oldLoc - 4;    
-    leds[flame1].setRGB(0,0,0);
-    leds[flame2].setRGB(0,0,0);
-    leds[flame3].setRGB(0,0,0);
-    leds[flame4].setRGB(0,0,0);
+    writeFlameAway(player.oldLoc);
 }
 
 void writePlayer()
 {
     leds[player.Loc].setRGB(player.Green, player.Red, player.Blue); // Player.
     if (buttonUpState == HIGH) {
-    flame1 = player.Loc - 1;
-    flame2 = player.Loc - 2;
-    flame3 = player.Loc - 3;
-    flame4 = player.Loc - 4;  
-    leds[flame1].setRGB(255,255,0);
-    leds[flame2].setRGB(191,255,0);
-    leds[flame3].setRGB(128,255,0);
-    leds[flame4].setRGB(0,100,0);
+    writeFlame(player.Loc);
     }
 }
 

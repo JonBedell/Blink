@@ -9,16 +9,20 @@ class Firework {
         int Green;
         int Blue;
         bool Exploded;
+        bool burstFin;
+        int explodeFrame;
         long Time;
         long oldTime;
 
     void Move()
     {
+        if (Exploded == false){
         oldTime = Time;
         Time = millis();
         Loc = Loc + Speed * ((Time - oldTime)/1000);
         if (Loc >= Height){
             Exploded = true;
+            }
         }
     }
 
@@ -31,6 +35,8 @@ class Firework {
         Green = random(0,255);
         Blue = random(0,255);
         Exploded = false;
+        explodeFrame = -1;
+        burstFin = false;
     }
 
     //Constructor
@@ -45,6 +51,7 @@ class Firework {
  * */
 Firework::Firework()
 {
+    explodeFrame = -1;
     Loc = 0;
     Speed = random(1,20);
     Height = random(0,200)+50;
@@ -52,6 +59,7 @@ Firework::Firework()
     Green = random(0,255);
     Blue = random(0,255);
     Exploded = false;    
+    burstFin = false;
 }
 
 
