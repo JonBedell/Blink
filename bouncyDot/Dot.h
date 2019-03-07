@@ -34,8 +34,8 @@ class Dot {
     void Flip()
     {
         Velocity = Velocity * -1;
-        if(Velocity<3){
-            Velocity = Velocity * 1.2
+        if(Velocity<6){
+            Velocity = Velocity * 1.1;
         }
     }
 

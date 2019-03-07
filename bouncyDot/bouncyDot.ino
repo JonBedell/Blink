@@ -106,7 +106,7 @@ void writeBackground()
 void moveTarget(){
     int oldLoc = target.Loc;
     int roll = random(0,100);
-    if(roll<25)
+    if(roll<15)
     {
         target.Height--;
     }
