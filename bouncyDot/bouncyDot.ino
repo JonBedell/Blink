@@ -25,6 +25,25 @@ Dot player(0,0,0,255); //the player
 Target target(100,15,55,0,0); //the target
 Background background(0,NUM_LEDS,15,0,10);
 
+//Rainbow Animation
+CRGB rainbows[14] = {
+  CRGB::Red,
+  CRGB::Orange,
+  CRGB::Yellow,
+  CRGB::Green,
+  CRGB::Blue,
+  CRGB::Indigo,
+  CRGB::Violet,
+  CRGB::Red,
+  CRGB::Orange,
+  CRGB::Yellow,
+  CRGB::Green,
+  CRGB::Blue,
+  CRGB::Indigo,
+  CRGB::Violet
+};
+int iterator = 0;
+
 // Other variables
 int redColor = 0;
 int blueColor = 0;
@@ -86,10 +105,14 @@ void writeBackground()
 
 void moveTarget(){
     int oldLoc = target.Loc;
-    target.Height--;
+    int roll = random(0,100);
+    if(roll<25)
+    {
+        target.Height--;
+    }
     if(player.Velocity > 0)
     {
-        target.Loc = random(oldLoc-(oldLoc/4), (NUM_LEDS - target.Height));
+        target.Loc = random(oldLoc+(oldLoc/4), (NUM_LEDS - target.Height));
     } else {
         target.Loc = random(0, oldLoc-(oldLoc/4));
     }
@@ -150,19 +173,25 @@ void checkExplosion()
         target.Loc = 185;
 
         //red
-        redColor = 255;
-        for (int i = NUM_LEDS; i > NUM_LEDS - 15; i--){
-            
-            leds[i].setRGB( 0, redColor , 10);
+        int j=0;
+        while(j<70)
+        {
+            for (int i=1; i < NUM_LEDS ; i++)
+            {
+                leds[i] = rainbows[(i%7)+iterator];
+            }
+            if (iterator < 6)
+            {
+                iterator++;
+            }
+            else
+            {
+                iterator = 0;
+            }
             FastLED.show();
+            delay(delayval);
+            j++;
         }
-        for (int i = 0; i < 15; i++){
-            //off
-            leds[i].setRGB( 30, redColor, 30);
-            FastLED.show();
-        }
-        delay(animationDelay*5);
-
         gameOver = true;
     }
 }
