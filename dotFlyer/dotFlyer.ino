@@ -18,12 +18,13 @@
 #include "Rocket.h"
 #include "Button.h"
 #include "Target.h"
+#include "Firework.h"
 
 //Making Objects 
 Button Up(13); //Buttons go here
 Button A(11);
 Button B(10);
-Rocket player(0,0,0,255); //the player 
+Rocket player(0,255,0,255); //the player 
 Target target(100,15,55,0,0); //the target
 
 // Other variables
@@ -112,7 +113,18 @@ void checkWin() {
         }
         if (wins == 4){
             //full win animation goes here
-
+ /*            time = millis();
+            Firework firework1();
+            Firework firework2();
+            Firework firework3();
+            while (millis() - time <= 10000){
+                firework1.Move();
+                firework2.Move();
+                firework3.Move();
+                if (firework1.Explode == true){
+                    
+                }
+            } */
             //fully restart game
             wins = 0;
             target.Loc = random(0,100)+100;
@@ -128,6 +140,19 @@ void checkWin() {
         gameState = 0; 
     }
 }
+
+void writeBackground()
+    {
+        blueColor = 100;
+        for (int i = 0; i < 100; i++){
+            leds[i].setRGB(0,0,blueColor);
+        }
+        for (int i = 100; i< 199; i++){
+            leds[i].setRGB(0,0,blueColor);
+            blueColor = blueColor - 1;
+        }
+    }
+
 
 void writeTarget() // Target fill
     {
@@ -264,6 +289,7 @@ void loop() {
     checkTarget();
 
     writePlayerAway();
+    writeBackground();
     writeTarget(); //displays target
     writePlayer();
     FastLED.show();
