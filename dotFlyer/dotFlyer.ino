@@ -23,7 +23,7 @@
 Button Up(13); //Buttons go here
 Button A(11);
 Button B(10);
-Rocket player(0,0,0,255); //the player 
+Rocket player(0,0,128,128); //the player 
 Target target(100,15,55,0,0); //the target
 
 // Other variables
@@ -102,17 +102,24 @@ void checkWin() {
         }
         //Restart game
         if (wins < 3){
-        target.Loc = random(0,100)+100;
+        target.Loc = random(0,180)+100;
         target.Height = random(0,15)+5;
         target.Step = target.Height/6;
-        } else {
-        target.Loc = 0;
+        }
+        if (wins == 3) {
+        target.Loc = 5;
         target.Height = 10;
         target.Step = target.Height/6;
         }
-        if (wins == 4){
+        if (wins > 3){
             //full win animation goes here
-
+            for (int i = 0; i < NUM_LEDS; i++){
+                redColor = random(0,200);
+                greenColor = random(0,200);
+                blueColor = random(0,200);
+                leds[i].setRGB(greenColor,redColor,blueColor);
+                FastLED.show();
+            }
             //fully restart game
             wins = 0;
             target.Loc = random(0,100)+100;
@@ -241,6 +248,7 @@ void setup() {
     FastLED.addLeds<WS2812B, LED_PIN, RGB>(leds, NUM_LEDS);
     //set player on strip
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
+    target.Loc = random(0,180)+100;
     writeTarget();
     FastLED.show(); 
 }
