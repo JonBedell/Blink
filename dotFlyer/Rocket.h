@@ -94,7 +94,7 @@ class Rocket {
             }
 
             //rocket has slammed into ground and exploded
-            if (Location <= 0 && Velocity > 100) {
+/*             if (Location <= 0 && Velocity > 100) {
                 Exploded = true;
                 Location = 0;
                 Acceleration = 0;
@@ -109,7 +109,7 @@ class Rocket {
                 oldAcceleration = 0;
                 Velocity = -0.7 * Velocity;
                 oldVelocity = -0.7 * Velocity;
-            }
+            } */
             // if (Loc == 0) {
             //     Acceleration = 0;
             // }

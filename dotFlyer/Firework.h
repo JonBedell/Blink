@@ -19,7 +19,7 @@ class Firework {
         if (Exploded == false){
         oldTime = Time;
         Time = millis();
-        Loc = Loc + Speed * ((Time - oldTime)/1000);
+        Loc = Loc + Speed * (Time - oldTime);
         if (Loc >= Height){
             Exploded = true;
             }

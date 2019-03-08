@@ -41,6 +41,7 @@ int flame2 = 0;
 int flame3 = 0;
 int flame4 = 0;
 
+
 //LED strip
 CRGB leds[NUM_LEDS]; // This is an array of leds.  One item for each led in your strip.
 
@@ -125,31 +126,21 @@ void checkWin() {
             while (millis() - time <= 10000){
 
                 //remove old fireworks & flames
-
-                //firework 1
-                leds[firework1.Loc].setRGB(0,0,0);
-                writeFlameAway(firework1.Loc);
-                //firework 2
-                leds[firework2.Loc].setRGB(0,0,0);
-                writeFlameAway(firework2.Loc);     
-                //firework 3         
-                leds[firework3.Loc].setRGB(0,0,0);
-                writeFlameAway(firework3.Loc);    
-
+                writeBackground();
                 //write new fireworks and flames
 
                 //firework 1
                 firework1.Move();
                 leds[firework1.Loc].setRGB(firework1.Green,firework1.Blue,firework1.Red);
-                writeFlame(firework1.Loc);
+                //writeFlame(firework1.Loc);
                 //firework 2
                 firework2.Move();
                 leds[firework2.Loc].setRGB(firework2.Green,firework2.Blue,firework2.Red);
-                writeFlame(firework2.Loc);
+                //writeFlame(firework2.Loc);
                 //firework 3
                 firework3.Move();
                 leds[firework3.Loc].setRGB(firework3.Green,firework3.Blue,firework3.Red);
-                writeFlame(firework3.Loc);
+                //writeFlame(firework3.Loc);
                 //display stuff
                 FastLED.show();
                 //set frame at which explosion occurs
@@ -234,22 +225,22 @@ void checkWin() {
     }
 }
 
-void writeFlameAway(int y){
-    flame1 = y - 1;
-    flame2 = y - 2;
-    flame3 = y - 3;
-    flame4 = y - 4; 
+void writeFlameAway(int boostLoc){
+    flame1 = boostLoc - 1;
+    flame2 = boostLoc - 2;
+    flame3 = boostLoc - 3;
+    flame4 = boostLoc - 4; 
     leds[flame1].setRGB(0,0,0);
     leds[flame2].setRGB(0,0,0);
     leds[flame3].setRGB(0,0,0);
     leds[flame4].setRGB(0,0,0);  
-}
+} 
 
-void writeFlame(int y){
-    flame1 = y - 1;
-    flame2 = y - 2;
-    flame3 = y - 3;
-    flame4 = y - 4; 
+void writeFlame(int boostLoc){
+    flame1 = boostLoc - 1;
+    flame2 = boostLoc - 2;
+    flame3 = boostLoc - 3;
+    flame4 = boostLoc - 4; 
     leds[flame1].setRGB(255,255,0);
     leds[flame2].setRGB(191,255,0);
     leds[flame3].setRGB(128,255,0);
@@ -259,12 +250,15 @@ void writeFlame(int y){
 void writeBackground()
     {
         blueColor = 100;
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 50; i++){
             leds[i].setRGB(0,0,blueColor);
         }
-        for (int i = 100; i< 199; i++){
+        for (int i = 50; i< 100; i++){
             leds[i].setRGB(0,0,blueColor);
             blueColor = blueColor - 1;
+        }
+        for (int i = 100; i<NUM_LEDS; i++){
+            leds[i].setRGB(0,0,0);
         }
     }
 
@@ -313,7 +307,15 @@ void writePlayer()
 {
     leds[player.Loc].setRGB(player.Green, player.Red, player.Blue); // Player.
     if (buttonUpState == HIGH) {
-    writeFlame(player.Loc);
+        flame1 = player.Loc - 1;
+        flame2 = player.Loc - 2;
+        flame3 = player.Loc - 3;
+        flame4 = player.Loc - 4;  
+        leds[flame1].setRGB(255,255,0);
+        leds[flame2].setRGB(191,255,0);
+        leds[flame3].setRGB(128,255,0);
+        leds[flame4].setRGB(0,100,0);
+        //writeFlame(player.Loc);
     }
 }
 
