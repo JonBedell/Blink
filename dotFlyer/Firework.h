@@ -63,32 +63,4 @@ Firework::Firework()
 }
 
 
- /*     int upDot = target.Loc + .5 * target.Height;
-        int downDot = target.Loc + .5 * target.Height;
-        int upFin = 0;
-        int downFin = 0;
-        // two way color fill across entire strip 
-        while (upFin + downFin != 2)
-            {
-                int redColor = random(0,255);
-                int greenColor = random(0,255);
-                int blueColor = random(0,255);
-                if (upFin == 0){
-                    leds[upDot].setRGB( greenColor, redColor, blueColor);
-                    FastLED.show();
-                    upDot = upDot + 1;
-                    if (upDot > NUM_LEDS){
-                        upFin = 1;
-                    }
-                }
-                if (downFin == 0){
-                    leds[downDot].setRGB( greenColor, redColor, blueColor);
-                    FastLED.show();
-                    downDot = downDot - 1;
-                    if (downDot < 0){
-                        downFin = 1; 
-                    }
-                }
-
-                //delay(animationDelay);
-            } */
+ 
