@@ -58,6 +58,51 @@ void writeFlame(int boostLoc){
     leds[flame4].setRGB(0,10,0);
 }
 
+void initializeBackground()
+    {
+        CRGB bgColor[NUM_LEDS];
+        blueColor = 100;
+        for (int i = 0; i < 50; i++){
+            bgColor[i].setRGB(0,0,blueColor);
+        }
+        for (int i = 50; i < 150; i++){
+            bgColor[i].setRGB(0,0,blueColor);
+            blueColor = blueColor - 1;
+        }
+        for (int i = 150; i < NUM_LEDS; i++){
+            bgColor[i].setRGB(0,0,0);
+    }
+
+void nblendU8TowardU8( uint8_t& cur, const uint8_t target, uint8_t amount)
+    {
+    if( cur == target) return;
+    
+    if( cur < target ) {
+        uint8_t delta = target - cur;
+        delta = scale8_video( delta, amount);
+        cur += delta;
+    } else {
+        uint8_t delta = cur - target;
+        delta = scale8_video( delta, amount);
+        cur -= delta;
+    }
+    }
+
+CRGB fadeTowardColor( CRGB& cur, const CRGB& target, uint8_t amount)
+    {
+    nblendU8TowardU8( cur.red,   target.red,   amount);
+    nblendU8TowardU8( cur.green, target.green, amount);
+    nblendU8TowardU8( cur.blue,  target.blue,  amount);
+    return cur;
+    }
+
+void fadeTowardColor( CRGB* L, uint16_t N, const CRGB& bgColor, uint8_t fadeAmount)
+    {
+    for( uint16_t i = 0; i < N; i++) {
+        fadeTowardColor( L[i], bgColor, fadeAmount);
+    }
+    }
+
 void writeBackground()
     {
         blueColor = 100;
@@ -85,6 +130,7 @@ void setup() {
     //initialize LED Strip
     FastLED.addLeds<WS2812B, LED_PIN, RGB>(leds, NUM_LEDS);
     //set player on strip
+    
     writeBackground();
     leds[firework1.Loc].setRGB(firework1.Green,firework1.Red,firework1.Blue);
     //leds[firework2.Loc].setRGB(firework2.Green,firework2.Blue,firework2.Red);
