@@ -20,8 +20,8 @@
 
 //Making Objects 
 Firework firework1;
-//Firework firework2;
-//Firework firework3;
+Firework firework2;
+Firework firework3;
 
 //LED strip
 CRGB leds[NUM_LEDS]; // This is an array of leds.  One item for each led in your strip.
@@ -58,50 +58,6 @@ void writeFlame(int boostLoc){
     leds[flame4].setRGB(0,10,0);
 }
 
-void initializeBackground()
-    {
-        CRGB bgColor[NUM_LEDS];
-        blueColor = 100;
-        for (int i = 0; i < 50; i++){
-            bgColor[i].setRGB(0,0,blueColor);
-        }
-        for (int i = 50; i < 150; i++){
-            bgColor[i].setRGB(0,0,blueColor);
-            blueColor = blueColor - 1;
-        }
-        for (int i = 150; i < NUM_LEDS; i++){
-            bgColor[i].setRGB(0,0,0);
-    }
-
-void nblendU8TowardU8( uint8_t& cur, const uint8_t target, uint8_t amount)
-    {
-    if( cur == target) return;
-    
-    if( cur < target ) {
-        uint8_t delta = target - cur;
-        delta = scale8_video( delta, amount);
-        cur += delta;
-    } else {
-        uint8_t delta = cur - target;
-        delta = scale8_video( delta, amount);
-        cur -= delta;
-    }
-    }
-
-CRGB fadeTowardColor( CRGB& cur, const CRGB& target, uint8_t amount)
-    {
-    nblendU8TowardU8( cur.red,   target.red,   amount);
-    nblendU8TowardU8( cur.green, target.green, amount);
-    nblendU8TowardU8( cur.blue,  target.blue,  amount);
-    return cur;
-    }
-
-void fadeTowardColor( CRGB* L, uint16_t N, const CRGB& bgColor, uint8_t fadeAmount)
-    {
-    for( uint16_t i = 0; i < N; i++) {
-        fadeTowardColor( L[i], bgColor, fadeAmount);
-    }
-    }
 
 void writeBackground()
     {
@@ -147,37 +103,107 @@ void loop() {
 
     //firework 1
     firework1.Move();
+    //write firework1
     leds[firework1.Loc].setRGB(firework1.Green,firework1.Red,firework1.Blue);
+    
     if (firework1.Exploded == false){
     writeFlame(firework1.Loc);
-    }
-
-    FastLED.show();
-    //set frame at which explosion occurs
-  
-    //burst animations
-
-    if (firework1.Exploded == true){
-        int redColor = random(0,255);
-        int greenColor = random(0,255);
-        int blueColor = random(0,255);
+    } else {
+        redColor = random(0,255);
+        greenColor = random(0,255);
+        blueColor = random(0,255);
         leds[firework1.Loc].setRGB(greenColor,redColor,blueColor);
         if (firework1.burstFin == false){
-            for (int i = firework1.Loc; i < firework1.Loc + 20; i++ ){
+            for (int i = firework1.Loc; i < firework1.Loc + firework1.loopCounter; i++ ){
                 leds[i].setRGB(greenColor,redColor,blueColor);
             }
-        for (int i = firework1.Loc; i > firework1.Loc - 20; i-- ){
+        for (int i = firework1.Loc; i > firework1.Loc - firework1.loopCounter; i-- ){
                 leds[i].setRGB(greenColor,redColor,blueColor);
             }
-        firework1.burstFin = true;
+            if (firework1.slowDown >= 2){
+                firework1.loopCounter = firework1.loopCounter + 1;
+                firework1.slowDown = 0;
+            } else {firework1.slowDown = firework1.slowDown + 1;
+            }
+        if (firework1.loopCounter == 12){
+            firework1.burstFin = true;
+        }
         }
     }
-    
-
-    FastLED.show();
-
     //reset fireworks if burst animation has completed
     if (firework1.burstFin == true){
         firework1.Reset();
     }
+
+
+
+    firework2.Move();
+    //write firework2
+    leds[firework2.Loc].setRGB(firework2.Green,firework2.Red,firework2.Blue);
+    
+    if (firework2.Exploded == false){
+    writeFlame(firework2.Loc);
+    } else {
+        redColor = random(0,255);
+        greenColor = random(0,255);
+        blueColor = random(0,255);
+        leds[firework2.Loc].setRGB(greenColor,redColor,blueColor);
+        if (firework2.burstFin == false){
+            for (int i = firework2.Loc; i < firework2.Loc + firework2.loopCounter; i++ ){
+                leds[i].setRGB(greenColor,redColor,blueColor);
+            }
+        for (int i = firework2.Loc; i > firework2.Loc - firework2.loopCounter; i-- ){
+                leds[i].setRGB(greenColor,redColor,blueColor);
+            }
+            if (firework2.slowDown >= 2){
+                firework2.loopCounter = firework2.loopCounter + 1;
+                firework2.slowDown = 0;
+            } else {firework2.slowDown = firework2.slowDown + 1;
+            }
+        if (firework2.loopCounter == 12){
+            firework2.burstFin = true;
+        }
+        }
+    }
+    //reset fireworks if burst animation has completed
+    if (firework2.burstFin == true){
+        firework2.Reset();
+    }
+
+
+
+
+    firework3.Move();
+    //write firework3
+    leds[firework3.Loc].setRGB(firework3.Green,firework3.Red,firework3.Blue);
+    
+    if (firework3.Exploded == false){
+    writeFlame(firework3.Loc);
+    } else {
+        redColor = random(0,255);
+        greenColor = random(0,255);
+        blueColor = random(0,255);
+        leds[firework3.Loc].setRGB(greenColor,redColor,blueColor);
+        if (firework3.burstFin == false){
+            for (int i = firework3.Loc; i < firework3.Loc + firework3.loopCounter; i++ ){
+                leds[i].setRGB(greenColor,redColor,blueColor);
+            }
+        for (int i = firework3.Loc; i > firework3.Loc - firework3.loopCounter; i-- ){
+                leds[i].setRGB(greenColor,redColor,blueColor);
+            }
+            if (firework3.slowDown >= 2){
+                firework3.loopCounter = firework3.loopCounter + 1;
+                firework3.slowDown = 0;
+            } else {firework3.slowDown = firework3.slowDown + 1;
+            }
+        if (firework3.loopCounter == 12){
+            firework3.burstFin = true;
+        }
+        }
+    }
+    //reset fireworks if burst animation has completed
+    if (firework3.burstFin == true){
+        firework3.Reset();
+    }
+        FastLED.show();
         };

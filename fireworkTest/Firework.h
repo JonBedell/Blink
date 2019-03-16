@@ -9,19 +9,21 @@ class Firework {
         int Green;
         int Blue;
         int loopCounter;
-        float Location;
+       // float Location;
         bool Exploded;
         bool burstFin;
-        int explodeFrame;
         long Time;
         long oldTime;
+        int burstSize;
+        int explodeFrame;
+        int slowDown;
 
     void Move()
     {
         if (Exploded == false){
         oldTime = Time;
         Time = millis();
-        Location = Location + 1;
+        Loc = Loc + 1;
         if (Loc >= Height){
             Exploded = true;
             }
@@ -29,19 +31,19 @@ class Firework {
         //if (Exploded = true){
         //    loopCounter = loopCounter + 1;
         //}
-        Loc = (int)Location;
+        //Loc = (int)Location;
     }
 
     void Reset()
     {
-        Location = 0;
-        Speed = random(1,5)+10;
-        Height = random(0,200)+50;
+        Loc = 0;
+        //Location = 0;
+        Speed = random8(1,5)+10;
+        Height = random8(0,200)+50;
         Red = 255;
         Green = 0;
         Blue = 0;
         Exploded = false;
-        explodeFrame = -1;
         burstFin = false;
         loopCounter = 0;
     }
@@ -60,14 +62,15 @@ Firework::Firework()
 {
     explodeFrame = -1;
     Loc = 0;
-    Speed = random(1,5);
-    Height = random(0,40)+150;
-    Red = random(0,255);
-    Green = random(0,255);
-    Blue = random(0,255);
+    Speed = random8(1,5);
+    Height = random8(0,100)+150;
+    Red = 255;
+    Green = 0;
+    Blue = 255;
     Exploded = false;    
     burstFin = false;
     loopCounter = 0;
+    slowDown = 2;
 }
 
 
