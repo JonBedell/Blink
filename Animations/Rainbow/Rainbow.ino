@@ -23,7 +23,7 @@ CRGB rainbows[14] = {
   CRGB::Green,
   CRGB::Blue,
   CRGB::Indigo,
-  CRGB::Violet
+  CRGB::Purple
 };
 int iterator = 0;
 
