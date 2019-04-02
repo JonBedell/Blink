@@ -174,8 +174,8 @@ void setup() {
     // initialize the pushbutton pin as an input:
     //Dot player(0,255,0,0);
     //Dot target(10,0,0,255);
-    leds[player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
-    leds[target.Loc].setRGB(target.Red, target.Green, target.Blue); // Player.
+    leds[player.X][player.Loc].setRGB( player.Red, player.Green, player.Blue); // Player.
+    leds[target.X][target.Loc].setRGB(target.Red, target.Green, target.Blue); // Player.
     //Many options for ways to set color see below
     //https://github.com/FastLED/FastLED/wiki/Controlling-leds
     FastLED.show();
