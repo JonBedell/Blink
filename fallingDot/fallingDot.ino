@@ -38,12 +38,6 @@ Dot target(3,20,0,0,255);
 int redColor = 0;
 int blueColor = 0;
 int greenColor = 0;
-bool buttonUpState = 0; 
-bool buttonDownState = 0;
-bool buttonLeftState = 0;
-bool buttonRightState = 0;
-bool buttonAState = 0;
-bool buttonBState = 0;
 
 //LED strip
 // This is an array of an array of leds.  One item for each led in your strip.
@@ -78,42 +72,42 @@ void loop() {
     delay(delayval);
 
     // read the state of the pushbutton value:
-    buttonUpState = Up.read();
-    buttonDownState = Down.read();
-    buttonLeftState = Left.read();
-    buttonRightState = Right.read();
-    buttonAState = A.read();
-    buttonBState = B.read();
+    Up.read();
+    Down.read();
+    Left.read();
+    Right.read();
+    A.read();
+    B.read();
 
     // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
     // If Button is pressed, current Dot is removed, and player location is +1'd
-    if (buttonUpState == HIGH && player.yLoc < (NUM_LEDS-1)) {
+    if (Up.State == HIGH && player.yLoc < (NUM_LEDS-1)) {
         // move player up:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
         player.yLoc++;
         player.LocUp = true;
     }
     buttonDownState = Down.read();
-    if (buttonDownState == HIGH && player.yLoc > 0) {
+    if (Down.State == HIGH && player.yLoc > 0) {
         // move player down:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
         player.yLoc--;
         player.LocUp = false;
     }
-    if (buttonLeftState == HIGH && player.xLoc > 0) {
+    if (Left.State == HIGH && player.xLoc > 0) {
         // move player down:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
         player.XLoc--;
         player.LocUp = false;
     }
-    if (buttonDownState == HIGH && player.xLoc > NUM_STRIPS-1) {
+    if (Right.State == HIGH && player.xLoc > NUM_STRIPS-1) {
         // move player down:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
         player.XLoc++;
         player.LocUp = false;
     }        
     // Read B Button for color change
-    if (buttonBState == HIGH) {
+    if (B.State == HIGH) {
         // move player down:
         player.colorCycle();
     }
@@ -125,55 +119,34 @@ void loop() {
 
 //Win state
     if (player.Loc == target.Loc) {
-        if(player.LocUp)
-        {
-            for (int i=player.Loc; i<NUM_LEDS; i++){
+        int upDot = target.Loc + .5 * target.Height;
+        int downDot = target.Loc + .5 * target.Height;
+        int upFin = 0;
+        int downFin = 0;
+        // two way color fill across entire strip 
+        while (upFin + downFin != 2)
+            {
                 int redColor = random(0,255);
                 int greenColor = random(0,255);
                 int blueColor = random(0,255);
-                leds[i].setRGB( redColor, greenColor, blueColor);
-                FastLED.show();
-                delay(animationDelay);
-            }
-            for (int i=player.Loc; i>-1; i--){
-                int redColor = random(0,255);
-                int greenColor = random(0,255);
-                int blueColor = random(0,255);
-                leds[i].setRGB( redColor, greenColor, blueColor);
-                FastLED.show();
-                delay(animationDelay);
-            }
-            for (int i=0; i<NUM_LEDS; i++){
-                redColor = 0;
-                greenColor = 0;
-                blueColor = 0;
-                leds[i].setRGB( redColor, greenColor, blueColor);
-                FastLED.show();
-            }
-        } else {
-            for (int i=player.Loc; i>-1; i--){
-                int redColor = random(0,255);
-                int greenColor = random(0,255);
-                int blueColor = random(0,255);
-                leds[i].setRGB( redColor, greenColor, blueColor);
-                FastLED.show();
-                delay(animationDelay);
-            }
-            for (int i=player.Loc; i<NUM_LEDS; i++){
-                int redColor = random(0,255);
-                int greenColor = random(0,255);
-                int blueColor = random(0,255);
-                leds[i].setRGB( redColor, greenColor, blueColor);
-                FastLED.show();
-                delay(animationDelay);
-            }
-            for (int i=NUM_LEDS; i>-1; i--){
-                redColor = 0;
-                greenColor = 0;
-                blueColor = 0;
-                leds[i].setRGB( redColor, greenColor, blueColor);
-                FastLED.show();
-            }
+                if (upFin == 0){
+                    leds[upDot].setRGB( greenColor, redColor, blueColor);
+                    FastLED.show();
+                    upDot = upDot + 1;
+                    if (upDot > NUM_LEDS){
+                        upFin = 1;
+                    }
+                }
+                if (downFin == 0){
+                    leds[downDot].setRGB( greenColor, redColor, blueColor);
+                    FastLED.show();
+                    downDot = downDot - 1;
+                    if (downDot < 0){
+                        downFin = 1; 
+                    }
+                }
+
+                //delay(animationDelay);
         }
 
     //Restart game
