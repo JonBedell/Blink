@@ -67,14 +67,14 @@ void loop(){
         leds[3][i] = rainbows[(i%7)+iterators[3]];
         leds[4][i] = rainbows[(i%7)+iterators[4]];
     }
-    for(int iterator : iterators){
-        if (iterator < 6)
+    for(int i=0; i < NUM_STRIPS ; i++){
+        if (iterators[i] < 6)
         {
-            iterator++;
+            iterators[i]++;
         }
         else
         {
-            iterator = 0;
+            iterators[i] = 0;
         }
     }
     FastLED.show();
