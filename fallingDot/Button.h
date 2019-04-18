@@ -6,8 +6,9 @@ creates an object that can read whether or not the button is pressed
 class Button {
 //Arduino pin button is connected to
 int _pin;
-bool State;
+
 public:
+    bool State;
     //Constructor
     Button(int);
     //Functions

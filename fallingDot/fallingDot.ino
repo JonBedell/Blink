@@ -85,26 +85,25 @@ void loop() {
         // move player up:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
         player.yLoc++;
-        player.LocUp = true;
+        //player.LocUp = true;
     }
-    buttonDownState = Down.read();
     if (Down.State == HIGH && player.yLoc > 0) {
         // move player down:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
         player.yLoc--;
-        player.LocUp = false;
+        //player.LocUp = false;
     }
     if (Left.State == HIGH && player.xLoc > 0) {
         // move player down:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
-        player.XLoc--;
-        player.LocUp = false;
+        player.xLoc--;
+        //player.LocUp = false;
     }
     if (Right.State == HIGH && player.xLoc > NUM_STRIPS-1) {
         // move player down:
         leds[player.xLoc][player.yLoc] = CRGB::Black; //erase old location
-        player.XLoc++;
-        player.LocUp = false;
+        player.xLoc++;
+        //player.LocUp = false;
     }        
     // Read B Button for color change
     if (B.State == HIGH) {
@@ -118,41 +117,41 @@ void loop() {
     FastLED.show();
 
 //Win state
-    if (player.Loc == target.Loc) {
-        int upDot = target.Loc + .5 * target.Height;
-        int downDot = target.Loc + .5 * target.Height;
-        int upFin = 0;
-        int downFin = 0;
-        // two way color fill across entire strip 
-        while (upFin + downFin != 2)
-            {
-                int redColor = random(0,255);
-                int greenColor = random(0,255);
-                int blueColor = random(0,255);
-                if (upFin == 0){
-                    leds[upDot].setRGB( greenColor, redColor, blueColor);
-                    FastLED.show();
-                    upDot = upDot + 1;
-                    if (upDot > NUM_LEDS){
-                        upFin = 1;
-                    }
-                }
-                if (downFin == 0){
-                    leds[downDot].setRGB( greenColor, redColor, blueColor);
-                    FastLED.show();
-                    downDot = downDot - 1;
-                    if (downDot < 0){
-                        downFin = 1; 
-                    }
-                }
+    // if (player.LocUp == target.LocUp) {
+    //     int upDot = target.LocUp + .5 * target.Height;
+    //     int downDot = target.LocUp + .5 * target.Height;
+    //     int upFin = 0;
+    //     int downFin = 0;
+    //     // two way color fill across entire strip 
+    //     while (upFin + downFin != 2)
+    //         {
+    //             int redColor = random(0,255);
+    //             int greenColor = random(0,255);
+    //             int blueColor = random(0,255);
+    //             if (upFin == 0){
+    //                 leds[upDot].setRGB( greenColor, redColor, blueColor);
+    //                 FastLED.show();
+    //                 upDot = upDot + 1;
+    //                 if (upDot > NUM_LEDS){
+    //                     upFin = 1;
+    //                 }
+    //             }
+    //             if (downFin == 0){
+    //                 leds[downDot].setRGB( greenColor, redColor, blueColor);
+    //                 FastLED.show();
+    //                 downDot = downDot - 1;
+    //                 if (downDot < 0){
+    //                     downFin = 1; 
+    //                 }
+    //             }
 
-                //delay(animationDelay);
-        }
+    //             //delay(animationDelay);
+    //     }
 
-    //Restart game
-    player.xLoc = random(0,NUM_LEDS-1);
-    player.yLoc = random(0,NUM_STRIPS-1);   
-    target.xLoc = random(0,NUM_STRIPS-1); 
-    target.yLoc = random(0,NUM_LEDS-1);
-    }
+    // //Restart game
+    // player.xLoc = random(0,NUM_LEDS-1);
+    // player.yLoc = random(0,NUM_STRIPS-1);   
+    // target.xLoc = random(0,NUM_STRIPS-1); 
+    // target.yLoc = random(0,NUM_LEDS-1);
+    // }
 }
