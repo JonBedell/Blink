@@ -17,15 +17,9 @@
 // This is an array of an array of leds.  One item for each led in your strip.
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 
+int NUM_COLORS = 7;
 //Color Library for Rainbow
-CRGB rainbows[14] = {
-  CRGB::Red,
-  CRGB::Orange,
-  CRGB::Yellow,
-  CRGB::Green,
-  CRGB::Blue,
-  CRGB::Indigo,
-  CRGB::Violet,
+CRGB rainbows[NUM_COLORS] = {
   CRGB::Red,
   CRGB::Orange,
   CRGB::Yellow,
@@ -34,8 +28,9 @@ CRGB rainbows[14] = {
   CRGB::Indigo,
   CRGB::Violet
 };
+
 //int iterator = 0;
-int iterators[NUM_STRIPS];
+int stripColorOffset[NUM_STRIPS];
 
 
 void setup() { 
@@ -44,8 +39,8 @@ void setup() {
    	delay(2000);
 
     //Populate iterator array
-    for(int i=0; i<NUM_STRIPS; i++){
-        iterators[i]=i;
+    for (int i = 0; i < NUM_STRIPS; i++) {
+        stripColorOffset[i] = i;
     }
 
     //This initializes the LED NUM_STRIPS
@@ -55,28 +50,22 @@ void setup() {
     FastLED.addLeds<WS2812B, STRIP4_PIN, RGB>(leds[3], NUM_LEDS);
     FastLED.addLeds<WS2812B, STRIP5_PIN, RGB>(leds[4], NUM_LEDS);
 
-    FastLED.setBrightness( 50 );
+    FastLED.setBrightness(50);
     FastLED.show();
 }
+
 void loop(){
-    for (int i=0; i < NUM_LEDS ; i++)
-    {
-        leds[0][i] = rainbows[(i%7)+iterators[0]];
-        leds[1][i] = rainbows[(i%7)+iterators[1]];
-        leds[2][i] = rainbows[(i%7)+iterators[2]];
-        leds[3][i] = rainbows[(i%7)+iterators[3]];
-        leds[4][i] = rainbows[(i%7)+iterators[4]];
+    for (int ledIndex = 0; ledIndex < NUM_LEDS ; ledIndex++) {
+		for (int stripIndex = 0; stripIndex < NUM_STRIPS; stripIndex++) {
+			int colorIndex = (ledIndex + stripColorOffset) % NUM_COLORS
+			leds[stripIndex][ledIndex] = rainbows[colorIndex];
+		}
     }
-    for(int i=0; i < NUM_STRIPS ; i++){
-        if (iterators[i] < 6)
-        {
-            iterators[i]++;
-        }
-        else
-        {
-            iterators[i] = 0;
-        }
+	
+    for (int stripIndex = 0; stripIndex < NUM_STRIPS; stripIndex++) {
+		stripColorOffset[stripIndex] = (stripColorOffset[stripIndex] + 1) % NUM_COLORS;
     }
+	
     FastLED.show();
     delay(delayval);
 }
