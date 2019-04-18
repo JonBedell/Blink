@@ -1,6 +1,5 @@
 #include <FastLED.h>
 #define PIN 1   // OUTPUT pin WS2812B LED Strip is attached to TODO: Rename to LED_PIN
-#define NUM_LEDS 300 // number of LEDs per strip TODO: Rename to NUM_LEDS
 #define debounceTime 200 // keep those button inputs clean
 #define NUM_STRIPS 5    //number of LED strips
 #define NUM_LEDS 300    //number of LEDs per strip
@@ -9,6 +8,7 @@
 #define STRIP3_PIN 4
 #define STRIP4_PIN 5
 #define STRIP5_PIN 6
+#define NUM_COLORS 7    //number of colors in da rainbow :)
 
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 0 //controls the speed of the win animation
@@ -17,7 +17,6 @@
 // This is an array of an array of leds.  One item for each led in your strip.
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 
-int NUM_COLORS = 7;
 //Color Library for Rainbow
 CRGB rainbows[NUM_COLORS] = {
   CRGB::Red,
@@ -57,7 +56,7 @@ void setup() {
 void loop(){
     for (int ledIndex = 0; ledIndex < NUM_LEDS ; ledIndex++) {
 		for (int stripIndex = 0; stripIndex < NUM_STRIPS; stripIndex++) {
-			int colorIndex = (ledIndex + stripColorOffset) % NUM_COLORS
+			int colorIndex = (ledIndex + stripColorOffset[stripIndex]) % NUM_COLORS;
 			leds[stripIndex][ledIndex] = rainbows[colorIndex];
 		}
     }
