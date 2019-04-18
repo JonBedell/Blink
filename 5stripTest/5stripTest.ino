@@ -47,25 +47,29 @@ void setup() {
     FastLED.show();
 }
 
-void loop() {
-    for (int i=0;i<NUM_LEDS;i++){
-        int redColor = random(0,30);
-        int greenColor = random(0,30);
-        int blueColor = random(0,30);
-        for (int j=0;j<NUM_STRIPS;j++){
-            leds[j][i].setRGB(greenColor,redColor,blueColor);
+void loop()
+{
+    for (int i = 0; i < NUM_LEDS; i++)
+	{
+        int redColor = random(0, 30);
+        int greenColor = random(0, 30);
+        int blueColor = random(0, 30);
+        for (int j = 0; j < NUM_STRIPS; j++)
+		{
+            leds[j][i].setRGB(greenColor, redColor, blueColor);
         }
         FastLED.show();
     }
-    for (int i=0;i<NUM_LEDS;i++){
+
+    for (int i = 0; i < NUM_LEDS; i++)
+	{
         int redColor = 0;
         int greenColor = 0;
         int blueColor = 0;
-        for (int j=0;j<NUM_STRIPS;j++){
-            leds[j][i].setRGB(greenColor,redColor,blueColor);
+        for (int j = 0; j < NUM_STRIPS; j++)
+		{
+            leds[j][i].setRGB(greenColor, redColor, blueColor);
         }
         FastLED.show();
-    }    
-
-
+    }
 }
