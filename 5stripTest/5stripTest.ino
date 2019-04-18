@@ -63,12 +63,9 @@ void loop()
 
     for (int i = 0; i < NUM_LEDS; i++)
 	{
-        int redColor = 0;
-        int greenColor = 0;
-        int blueColor = 0;
         for (int j = 0; j < NUM_STRIPS; j++)
 		{
-            leds[j][i].setRGB(greenColor, redColor, blueColor);
+            leds[j][i] = 0;
         }
         FastLED.show();
     }
