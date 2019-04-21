@@ -1,5 +1,5 @@
 #include <FastLED.h>
-#include <Animations.h>
+#include <Rainbow.h>
 
 Rainbow rainbow;
 
