@@ -39,7 +39,7 @@ class Firework {
         Loc = 0;
         //Location = 0;
         Speed = random8(1,5)+10;
-        Height = random8(0,200)+50;
+        Height = random8(0,250)+50;
         Red = 255;
         Green = 0;
         Blue = 0;

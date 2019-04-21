@@ -13,8 +13,9 @@
 #define NUM_LEDS 300 // number of LEDs per strip
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
-#define animationDelay 10 //controls the speed of the win animation
-#define NUM_FIREWORKS 3
+#define animationDelay 20 //controls the speed of the win animation
+#define NUM_FIREWORKS 5  //maximum of 30 on UNO
+#define BRIGHTNESS 50
 
 
 #include "Firework.h"
@@ -95,7 +96,7 @@ void setup() {
  }
     //leds[firework2.Loc].setRGB(firework2.Green,firework2.Blue,firework2.Red);
     //leds[firework3.Loc].setRGB(firework3.Green,firework3.Blue,firework3.Red);
-
+    FastLED.setBrightness(BRIGHTNESS);
     FastLED.show(); 
 }
 
@@ -141,4 +142,5 @@ for (int f = 0; f < NUM_FIREWORKS; f++){
     }
 }
 FastLED.show();
+delay(animationDelay);
 };
