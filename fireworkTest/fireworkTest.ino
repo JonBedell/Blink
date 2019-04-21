@@ -13,7 +13,7 @@
 #define NUM_LEDS 300 // number of LEDs per strip
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
-#define animationDelay 20 //controls the speed of the win animation
+#define animationDelay 50 //controls the speed of the win animation
 #define NUM_FIREWORKS 5  //maximum of 30 on UNO
 #define BRIGHTNESS 50
 
@@ -115,9 +115,9 @@ for (int f = 0; f < NUM_FIREWORKS; f++){
     if (firework[f].Exploded == false){
     writeFlame(firework[f].Loc);
     } else {
-        redColor = random(0,255);
-        greenColor = random(0,255);
-        blueColor = random(0,255);
+        redColor = random(0,100);
+        greenColor = random(0,100);
+        blueColor = random(0,100);
         leds[firework[f].Loc].setRGB(greenColor,redColor,blueColor);
         if (firework[f].burstFin == false){
             for (int i = firework[f].Loc; i < firework[f].Loc + firework[f].loopCounter; i++ ){

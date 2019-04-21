@@ -13,11 +13,14 @@
 #define NUM_LEDS 300 // number of LEDs per strip
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
-#define animationDelay 10 //controls the speed of the win animation
+#define animationDelay 50 //controls the speed of the win animation
+#define NUM_FIREWORKS 5  //maximum of 30 on UNO
+#define BRIGHTNESS 50
 
 #include "Rocket.h"
 #include "Button.h"
 #include "Target.h"
+#include "Firework.h"
 
 //Making Objects 
 Button Up(13); //Buttons go here
@@ -25,6 +28,7 @@ Button A(11);
 Button B(10);
 Rocket player(0,0,128,128); //the player 
 Target target(100,15,55,0,0); //the target
+Firework firework[NUM_FIREWORKS]; //win animation fireworks
 
 // Other variables
 int redColor = 0;
@@ -250,6 +254,7 @@ void setup() {
     leds[player.Loc].setRGB( player.Green, player.Red, player.Blue); // Player.
     target.Loc = random(0,180)+100;
     writeTarget();
+    
     FastLED.show(); 
 }
 
