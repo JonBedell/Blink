@@ -13,6 +13,10 @@
                 "C:\\Program Files (x86)\\Arduino\\libraries\\**",
                 "C:\\Users\\ploet\\Documents\\Arduino\\hardware\\tools\\**",
                 "C:\\Users\\ploet\\Documents\\Arduino\\libraries\\**"
+                "C:\\\\Program Files (x86)\\\\Arduino\\\\hardware\\\\tools\\\\**",
+                "C:\\\\Program Files (x86)\\\\Arduino\\\\libraries\\\\**",
+                "C:\\\\Users\\\\baile\\\\Documents\\\\Arduino\\\\libraries\\\\**",
+                "C:\\\\Program Files (x86)\\\\Arduino\\\\**"
             ],
             "forcedInclude": [
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"

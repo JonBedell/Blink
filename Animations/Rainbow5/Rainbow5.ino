@@ -34,7 +34,7 @@ CRGB rainbows[NUM_COLORS] = {
 void setup() { 
     //FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS); 
     // sanity check delay - allows reprogramming if accidently blowing power w/leds
-   	delay(2000);
+   	FastLED.delay(2000);
 
     //This initializes the LED NUM_STRIPS
     FastLED.addLeds<WS2812B, STRIP1_PIN, RGB>(leds[0], NUM_LEDS);
@@ -59,7 +59,7 @@ void loop(){
     frameIndex = (frameIndex + 1) % NUM_COLORS;
 
     FastLED.show();
-    delay(delayval);
+    FastLED.delay(delayval);
 }
 
 inline CRGB* getBackgroundColor(int frame, int strip, int led)
