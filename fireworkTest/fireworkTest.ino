@@ -14,7 +14,7 @@
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
 #define animationDelay 10 //controls the speed of the win animation
-#define NUM_FIREWORKS
+#define NUM_FIREWORKS 3
 
 
 #include "Firework.h"
