@@ -1,8 +1,7 @@
 #include <FastLED.h>
+#include <Animations.h>
 
 #define debounceTime 200 // keep those button inputs clean
-#define NUM_STRIPS 5    //number of LED strips
-#define NUM_LEDS 300    //number of LEDs per strip
 
 // LED Strip Pin Addresses
 #define STRIP1_PIN 2    
@@ -20,16 +19,7 @@
 // This is an array of an array of leds.  One item for each led in your strip.
 CRGB leds[NUM_STRIPS][NUM_LEDS];
 
-//Color Library for Rainbow
-CRGB rainbows[NUM_COLORS] = {
-  CRGB::Red,
-  CRGB::Orange,
-  CRGB::Yellow,
-  CRGB::Green,
-  CRGB::Blue,
-  CRGB::Indigo,
-  CRGB::Violet
-};
+Rainbow rainbow;
 
 void setup() { 
     //FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS); 
@@ -47,23 +37,9 @@ void setup() {
     FastLED.show();
 }
 
-int frameIndex = 0;
-
 void loop(){
-    for (int ledIndex = 0; ledIndex < NUM_LEDS ; ledIndex++) {
-		for (int stripIndex = 0; stripIndex < NUM_STRIPS; stripIndex++) {
-			leds[stripIndex][ledIndex] = *getBackgroundColor(frameIndex, stripIndex, ledIndex);
-		}
-    }
-	
-    frameIndex = (frameIndex + 1) % NUM_COLORS;
+    rainbow.draw(&leds);
 
     FastLED.show();
     FastLED.delay(delayval);
-}
-
-inline CRGB* getBackgroundColor(int frame, int strip, int led)
-{
-    int colorIndex = (led + frame + strip) % NUM_COLORS;
-    return &rainbows[colorIndex];
 }

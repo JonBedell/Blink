@@ -1,16 +1,10 @@
 #include <FastLED.h>
-
-struct Canvas
-{
-    CRGB** leds;
-    size_t stripCount;
-    size_t stripLength;
-};
+#include <Constants.h>
 
 class Animation
 {
     public:
-        virtual void draw(Canvas* canvas);
+        virtual void draw(CRGB (*canvas)[NUM_STRIPS][NUM_LEDS]);
 };
 
 
@@ -37,17 +31,17 @@ class Rainbow : public Animation
         }
 
     public:
-        void draw(Canvas* canvas)
+        void draw(CRGB (*canvas)[NUM_STRIPS][NUM_LEDS])
         {
-            for (int ledIndex = 0; ledIndex < canvas->stripLength; ledIndex++)
+            for (int ledIndex = 0; ledIndex < NUM_LEDS; ledIndex++)
             {
-                for (int stripIndex = 0; stripIndex < canvas->stripCount; stripIndex++)
+                for (int stripIndex = 0; stripIndex < NUM_STRIPS; stripIndex++)
                 {
-                    canvas->leds[stripIndex][ledIndex] = *getBackgroundColor(0, stripIndex, ledIndex);
+                    (*canvas)[stripIndex][ledIndex] = *getBackgroundColor(frameIndex, stripIndex, ledIndex);
                 }
             }
 
             // Increment frame to next index
             frameIndex = (frameIndex + 1) % palletSize;
         }
-}
+};
