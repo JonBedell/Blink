@@ -1,7 +1,5 @@
 #include <FastLED.h>
 
-#define FRAME_SPEED 25 //controls the "speed" of the animation in millis
-
 #define NUM_STRIPS 5    //number of LED strips
 #define NUM_LEDS 300    //number of LEDs per strip
 
@@ -12,6 +10,8 @@
 #define STRIP4_PIN 5
 #define STRIP5_PIN 6
 
+// Frame Speed is the number of milliseconds between frames. This is an int declaration so it can be changed
+int FRAME_SPEED = 25;
 
 //LED strip
 // This is an array of an array of leds.  One item for each led in your strip.
