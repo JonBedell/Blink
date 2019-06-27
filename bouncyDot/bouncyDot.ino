@@ -6,7 +6,7 @@
 
 #include <FastLED.h>
 
-#define LED_PIN 1   // OUTPUT pin WS2812B LED Strip is attached to input is GRB not RGB
+#define LED_PIN 2   // OUTPUT pin WS2812B LED Strip is attached to input is GRB not RGB
 #define NUM_LEDS 300 // number of LEDs per strip
 #define debounceTime 200 // keep those button inputs clean
 #define delayval 25 //controls the "speed" of the player dot
